@@ -1,0 +1,55 @@
+body {
+  font-family: "Varela Round", Arial, Helvetica, sans-serif;;
+}
+
+.poptape-dark {
+  background-color: #1f3263;
+}
+
+
+.poptape-h3-black {
+    color: #000000;
+}
+
+.poptape-modal-outer {  
+  z-index: 1340;
+  position: fixed;  
+  width: 100%;  
+  height: 100%;  
+  top: 0;  
+  left: 0;  
+  right: 0;  
+  bottom: 0;  
+  margin: auto;  
+  text-align: center;
+  background-color: rgba(0,0,0, 0.5);  
+} 
+
+.poptape-modal-inner {
+  position: absolute;  
+  left: 35%;  
+  right: 35%;  
+  top: 25%;  
+  bottom: 25%;
+  display: inline-block;
+  width: 250px;
+  margin: auto;
+  padding: 20px;
+  border-radius: 20px;
+  background: white;
+  z-index: 1350;
+}
+
+.poptape-login-modal-inner {  
+  height: 250px;
+}
+
+.poptape-signup-modal-inner {
+  height: 370px;
+}
+
+.poptape-login-modal-button {
+  margin: 5px;
+}
+
+
