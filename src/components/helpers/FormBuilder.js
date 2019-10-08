@@ -266,7 +266,7 @@ class FormBuilder extends Component {
                         //minimumValue="0"
                         outputFormat="string"
                         decimalCharacter="."
-                        digitGroupSeparator=","
+                        digitGroupSeparator=""
                         onChange={(e) => {this.onChange(e, key)}}
                     />
                     <br />

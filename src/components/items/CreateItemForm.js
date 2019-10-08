@@ -399,7 +399,7 @@ class CreateItemForm extends Component {
 
     // close dropzone dialog
     handleClose = () => {
-        console.log("Closing dropzone")
+        //console.log("Closing dropzone")
         this.setState({
             openUpload: false
         });
@@ -429,11 +429,8 @@ class CreateItemForm extends Component {
         const setResults = (results) => {
             this.setState({results}, 
                           () => {
-                                //console.log("Results updated")
-                                //console.log(this.state.results)
                                 this.setState({ showDropzone: false },
                                               () => {
-                                                    //console.log("Dropzone state changed")
                                                     this.setState({ showResults: true })
                                                     })
                                 })
@@ -443,6 +440,38 @@ class CreateItemForm extends Component {
             } else {
                 this.setState({ showResults: true })
             }
+        }
+
+        // this function taken from
+        // https://umbracofreelancer.uk/blog/post/create-thumbnails-using-javascript/
+        const createThumbnail = (image, imType) => {
+
+            const thumbnailMaxWidth = 150
+            const thumbnailMaxHeight = 100
+            let canvas, ctx, thumbnailScale, thumbnailWidth, thumbnailHeight
+            // create an off-screen canvas
+            canvas = document.createElement('canvas');
+            ctx = canvas.getContext('2d');
+
+            //Calculate the size of the thumbnail, to best fit within max/width (cropspadding)
+            thumbnailScale = (image.width / image.height) > (thumbnailMaxWidth / thumbnailMaxHeight) ?
+                thumbnailMaxWidth / image.width :
+                thumbnailMaxHeight / image.height;
+            thumbnailWidth = image.width * thumbnailScale;
+            thumbnailHeight = image.height * thumbnailScale;
+
+            // set its dimension to target size
+            canvas.width = thumbnailWidth;
+            canvas.height = thumbnailHeight;
+
+            // draw source image into the off-screen canvas:
+            ctx.drawImage(image, 0, 0, thumbnailWidth, thumbnailHeight);
+
+            return [canvas.toDataURL(imType, 70),
+                    image.width,
+                    image.height,
+                    thumbnailWidth, 
+                    thumbnailHeight]
         }
 
         // async superagent requests to post all images to s3
@@ -462,6 +491,20 @@ class CreateItemForm extends Component {
                 formData.append('x-amz-signature', currentS3URL.fields["x-amz-signature"])
                 formData.append('file', currentFile)
 
+                // read file data and create thumbnail (base64 encoded data)
+                const reader  = new FileReader()
+                reader.onload = function (event) {
+                    const originalImage = new Image()
+                    originalImage.src = event.target.result
+                    const [base64, oWidth, oHeight, tWidth, tHeight] = createThumbnail(originalImage, currentFile.type)
+                    fotoData["thumbnail"] = base64
+                    fotoData["orig_width"] = oWidth
+                    fotoData["orig_height"] = oHeight
+                    fotoData["thumb_width"] = tWidth
+                    fotoData["thumb_height"] = tHeight
+                }
+                reader.readAsDataURL(currentFile)
+
                 fotoData["item_id"] = itemId
                 fotoData["foto_id"] = currentS3URL.fields.key
                 fotoData["s3_url"] = bucketURL+currentS3URL.fields.key
@@ -476,7 +519,6 @@ class CreateItemForm extends Component {
                        .set('Accept', 'application/json')
                        .send(formData)
                        .then(res => {
-                            console.log(res)
                             results.push({ 'url': fotoData.s3_url,
                                            'originalFilename': currentFile.name,
                                            'status': res.status })
@@ -607,7 +649,7 @@ class CreateItemForm extends Component {
                     <DropzoneDialog
                         open = {this.state.openUpload}
                         onSave = {this.handleSave.bind(this)}
-                        acceptedFiles = {['image/jpeg', 'image/png', 'image/gif']}
+                        acceptedFiles = {['image/jpeg', 'image/png']}
                         showPreviews={false}
                         showAlerts={false}
                         showPreviewsInDropzone={true}

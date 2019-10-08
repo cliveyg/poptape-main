@@ -8,9 +8,13 @@ import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 //import AddBoxOutlinedIcon from '@material-ui/icons/AddBoxOutlined'
 //import AddToPhotosOutlinedIcon from '@material-ui/icons/AddToPhotosOutlined'
-//import styles from 'react-responsive-carousel/lib/styles/carousel.min.css'
-import "react-responsive-carousel/lib/styles/carousel.min.css"
-import { Carousel } from 'react-responsive-carousel'
+//import "react-responsive-carousel/lib/styles/carousel.min.css"
+//import { Carousel } from 'react-responsive-carousel'
+//import nophoto from '../no-photo-icon.png'
+import nophoto from '../no-photo-icon-faded.png'
+import "react-image-gallery/styles/css/image-gallery.css"
+import ImageGallery from 'react-image-gallery'
+import DisplayMiniAuction from '../auction/DisplayMiniAuction'
 
 const dStyles = theme => ({
   dropzone: {
@@ -48,15 +52,18 @@ const dStyles = theme => ({
   carouselBox: {
     float: "right",
     width: "50%",
+    height: 650,
   },
   auctionBox: {
     float: "left",
-    width: "50%",
+    width: "48%",
     position: "absolute",
     left: 0,
     top: 0,
     height: "100%",
     background: "#e6e2e1",
+    padding: 10,
+    //marginRight: 30,
   },
   blurb: {
     //display: "inline"
@@ -96,6 +103,7 @@ class DisplayItem extends Component {
         }
 
         // load any auction info 
+        
 
         this.openSnack    = this.openSnack.bind(this)
         this.handleChange = this.handleChange.bind(this)
@@ -148,8 +156,30 @@ class DisplayItem extends Component {
         const key_date = this.state.date
         const { classes } = this.props
         let description = this.state.item.description
-        //description = description.replace(/(?:\r\n|\r|\n)/g, '<br />')
-        // render the categories dropdowns and load form based on user selection
+
+        // load gallery images
+        //let maxImageHeight = 0
+        let meImages = []
+        //let testThumb
+       
+        if (this.state.item.fotos.length > 0) { 
+            //testThumb = <img src={this.state.item.fotos[0].metadata.thumbnail} alt='' />
+            meImages = this.state.item.fotos.map((foto) => {
+                //if (foto.metadata.orig_height > maxImageHeight) {
+                    //maxImageHeight = foto.metadata.orig_height
+                //}
+                return { original: foto.metadata.s3_url,
+                                 thumbnail: foto.metadata.s3_url }
+            })
+        } else {
+            //testThumb = <img style={{height: 150, width: 150}} src={nophoto} alt='' />
+            meImages = [{ original: nophoto, thumbnail: nophoto }]
+        }
+        // add on thumbnail height 
+        //console.log("MaxH "+maxImageHeight)
+        //maxImageHeight = (maxImageHeight/2) + 200
+        //style={{ height: maxImageHeight}
+
         return (
             <div>
             {this.state.showError ?
@@ -162,31 +192,24 @@ class DisplayItem extends Component {
                 <div>
                     <div>
                         <Typography variant="h5" component="h5">
-                            {this.state.item.name}<br /><br />
+                            <b>{this.state.item.name}</b><br /><br />
                         </Typography>
                     </div>
                     <div className={classes.topSection}>
                         <div className={classes.auctionBox}>
-                                Bollox goes here<br /><br /><br /><br />
-                                Lorem ipsum
+                            <DisplayMiniAuction
+                                itemId = {this.state.item.item_id}
+                            />
                         </div>
                         <div 
                             className={classes.carouselBox}
                             ref={ (cBox) => this.cBox = cBox }
                         >
-                            <Carousel
-                                showThumbs={true}
-                                infiniteLoop={true}
-                                onChange={this.someFunc}
-                                onClickItem={this.someFunc}
-                                onClickThumb={this.someFunc}
-                            >
-                                {this.state.item.fotos.map((foto, idx) => (
-                                    <div key={idx}>
-                                        <img src={foto.metadata.s3_url} />
-                                    </div>
-                                 ))}
-                            </Carousel>
+                            <ImageGallery 
+                                autoPlay={false} 
+                                items={meImages} 
+                                slideInterval={5000}
+                            />
                         </div>
                     </div>
                     <div className={classes.blurb}>

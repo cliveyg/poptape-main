@@ -125,7 +125,6 @@ class AddToAuction extends Component {
     }
 
     onSubmit = model => {
-        console.log("We is submitted")
         // add auction type
         model['type'] = 'EN'
         model['currency'] = 'GBP'

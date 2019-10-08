@@ -11,6 +11,7 @@
     "@unicef/material-ui-currency-textfield": "^0.8.3",
     "date-fns": "^2.4.1",
     "formik": "^1.5.8",
+    "image-thumbnail": "^1.0.4",
     "js-cookie": "^2.2.1",
     "jss": "^9.8.7",
     "material-ui": "^1.0.0-beta.46",
@@ -24,6 +25,7 @@
     "react-material-ui-form": "^1.1.4",
     "react-responsive-carousel": "^3.1.50",
     "react-scripts": "3.0.1",
+    "sharp": "^0.23.1",
     "superagent": "^5.1.0",
     "typeface-varela-round": "0.0.71",
     "typescript": "^3.6.3"
