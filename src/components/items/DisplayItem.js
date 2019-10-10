@@ -1,36 +1,24 @@
 import React, {Component} from 'react'
 import { withStyles } from '@material-ui/core/styles'
-//import FormBuilder from '../helpers/FormBuilder'
 import CustomizedSnackbars from '../information/CustomSnackbars'
-import Cookies from 'js-cookie'
-import Button from '@material-ui/core/Button'
-import Paper from '@material-ui/core/Paper'
+//import Cookies from 'js-cookie'
+//import Button from '@material-ui/core/Button'
+//import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
-//import AddBoxOutlinedIcon from '@material-ui/icons/AddBoxOutlined'
-//import AddToPhotosOutlinedIcon from '@material-ui/icons/AddToPhotosOutlined'
-//import "react-responsive-carousel/lib/styles/carousel.min.css"
-//import { Carousel } from 'react-responsive-carousel'
-//import nophoto from '../no-photo-icon.png'
 import nophoto from '../no-photo-icon-faded.png'
 import "react-image-gallery/styles/css/image-gallery.css"
 import ImageGallery from 'react-image-gallery'
 import DisplayMiniAuction from '../auction/DisplayMiniAuction'
+import SellerInfoCard from '../seller/SellerInfoCard'
+import AuctionOptions from '../auction/AuctionOptions'
+//import red from '@material-ui/core/colors/red'
+import DisplayFields from './DisplayFields'
+//import '../../Poptape.css'
 
 const dStyles = theme => ({
-  dropzone: {
-   fontSize: 12,
-   padding: 10,
-  },
-  root: {
-    padding: theme.spacing(3, 2),
-  },
   displayLinebreak: {
-    //padding: theme.spacing(3, 2),
     fontSize: "0.8em",
     whiteSpace: "pre-line"
-  },
-  itemName: {
-    fontStyle: "italic"
   },
   divbuttons: {
     width: "100%",
@@ -51,8 +39,10 @@ const dStyles = theme => ({
   },
   carouselBox: {
     float: "right",
-    width: "50%",
-    height: 650,
+    maxWidth: "50%",
+    minHeight: 650,
+    //maxHeight: 1500,
+    //height: 700,
   },
   auctionBox: {
     float: "left",
@@ -65,6 +55,11 @@ const dStyles = theme => ({
     padding: 10,
     //marginRight: 30,
   },
+  imageGallery: {
+    //maxHeight: 500,
+    //height: 500,
+    //maxWidth: "auto",
+  },
   blurb: {
     //display: "inline"
   },
@@ -72,6 +67,21 @@ const dStyles = theme => ({
     overflow: "hidden",
     position: "relative",
     width: "100%",
+  },
+  itemName: { 
+    fontSize: "1.4em",
+    fontWeight: "bold",
+  },
+  newBadge: {
+    backgroundColor: "#e43e43",
+    color: "white",
+    paddingLeft: 10,
+    paddingRight: 10,
+    marginRight: 10,
+    borderRadius: 5,
+    fontSize: "0.8em",
+    //display: "inline-block",
+    //transform: [{ rotate: "-50deg"}],
   },
 });
 
@@ -89,6 +99,7 @@ class DisplayItem extends Component {
 
         this.state = { showSnack: false,
                        showError: true,
+                       newBadge: false,
                        duration: 1900,
                        item: this.props.item,
                        auctionType: '',
@@ -99,11 +110,8 @@ class DisplayItem extends Component {
         // check for passed in item_id
         if (this.props.item) {
             this.state.showError = false
-            console.log("itemId is ["+this.state.item.item_id+"]")
+            //console.log("itemId is ["+this.state.item.item_id+"]")
         }
-
-        // load any auction info 
-        
 
         this.openSnack    = this.openSnack.bind(this)
         this.handleChange = this.handleChange.bind(this)
@@ -120,7 +128,6 @@ class DisplayItem extends Component {
     }
 
     handleButton = (e, aucType) => {
-
         console.log(":::::::")
         console.log(aucType)
     }
@@ -147,15 +154,14 @@ class DisplayItem extends Component {
     }
 
     componentDidMount() {
-        const height = this.cBox.clientHeight
+        //const height = this.cBox.clientHeight
         //this.setState({ carouselHeight: height })
-        console.log("Height is ["+height+"]")
+        //console.log("Height is ["+height+"]")
     }
 
     render() {
         const key_date = this.state.date
         const { classes } = this.props
-        let description = this.state.item.description
 
         // load gallery images
         //let maxImageHeight = 0
@@ -179,9 +185,13 @@ class DisplayItem extends Component {
         //console.log("MaxH "+maxImageHeight)
         //maxImageHeight = (maxImageHeight/2) + 200
         //style={{ height: maxImageHeight}
+        let dipBadge = ''
+        if (this.state.newBadge) {
+            dipBadge = <span className={classes.newBadge}>NEW!</span>
+        }
 
         return (
-            <div>
+            <div style={{width: "100%"}}>
             {this.state.showError ?
                 <div>
                     <Typography variant="h5" component="h5">
@@ -191,13 +201,20 @@ class DisplayItem extends Component {
             :
                 <div>
                     <div>
-                        <Typography variant="h5" component="h5">
-                            <b>{this.state.item.name}</b><br /><br />
+                        <Typography className={classes.itemName} variant="h4" component="h4">
+                            {dipBadge}{this.state.item.name}<br /><br />
                         </Typography>
                     </div>
                     <div className={classes.topSection}>
                         <div className={classes.auctionBox}>
                             <DisplayMiniAuction
+                                itemId = {this.state.item.item_id}
+                            />
+                            <SellerInfoCard
+                                publicId = {this.state.item.public_id}
+                            />
+                            <AuctionOptions
+                                publicId = {this.state.item.public_id}
                                 itemId = {this.state.item.item_id}
                             />
                         </div>
@@ -209,16 +226,14 @@ class DisplayItem extends Component {
                                 autoPlay={false} 
                                 items={meImages} 
                                 slideInterval={5000}
+                                additionalClass={classes.imageGallery}
                             />
                         </div>
                     </div>
                     <div className={classes.blurb}>
-                        <Paper className={classes.displayLinebreak}>
-                            <Typography variant="h5" component="h5">
-                                Description:
-                            </Typography>
-                            <br />{description}
-                        </Paper>
+                        <DisplayFields
+                            item = {this.state.item}
+                        />
                     </div>
                 </div>
             }

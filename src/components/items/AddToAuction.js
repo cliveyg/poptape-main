@@ -62,6 +62,7 @@ const soloEnAuction = [
     {key: "end_time", label: "Auction end", type: "datetime", props: {disabled: false, required: true}},
     {key: "quantity", label: "Quantity", type: "number", props: {required: true}},
     {key: "start_price", label: "Starting price (optional)", type: "currency", props: {required: false}},
+    {key: "reserve_price", label: "Reserve price (optional)", type: "currency", props: {required: false}},
     {key: "min_increment", label: "Minimum increment", type: "currency", props: {required: true}},
 /*
 {key: "name", label: "Name", type: "text", props: {required: true, maxlength: 150}},

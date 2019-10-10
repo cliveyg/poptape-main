@@ -12,7 +12,7 @@ import Paper from '@material-ui/core/Paper'
 import Cookies from 'js-cookie'
 //import nophoto from '../no-photo-icon.png'
 import nophoto from '../no-photo-icon-faded.png'
-import Typography from '@material-ui/core/Typography'
+//import Typography from '@material-ui/core/Typography'
 
 const styles = theme => ({
   root: {

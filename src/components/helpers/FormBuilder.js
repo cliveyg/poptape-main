@@ -208,8 +208,9 @@ class FormBuilder extends Component {
                     /><br /><br /><br />
                     </div>
             } else if (type === "checkbox") {
-                let checkboxElements = props.items.map((item) => {
+                let checkboxElements = props.items.map((item, idx) => {
                     return (<FormControlLabel
+                                key={idx}
                                 control={
                                     <Checkbox 
                                         checked={this.state[item.value]}
@@ -264,9 +265,9 @@ class FormBuilder extends Component {
                         ref={(key) => this[m.key]=key}
                         currencySymbol="£"
                         //minimumValue="0"
-                        outputFormat="string"
+                        outputFormat="number"
                         decimalCharacter="."
-                        digitGroupSeparator=""
+                        digitGroupSeparator=","
                         onChange={(e) => {this.onChange(e, key)}}
                     />
                     <br />

@@ -10,6 +10,8 @@ import './Poptape.css'
 import 'typeface-varela-round';
 //import styles from 'react-responsive-carousel/lib/styles/carousel.min.css'
 //import { Carousel } from 'react-responsive-carousel'
+//import blue from '@material-ui/core/colors/blue'
+//import pink from '@material-ui/core/colors/pink'
 
 const theme = createMuiTheme({
   typography: {
@@ -41,12 +43,12 @@ class App extends Component {
 
     render() {
         return (
-            <div>
+            <div style={{ width:"100%"}}>
                 <MuiThemeProvider theme={theme}>
                 <header>
                     <MainNavBar />
                 </header>
-                <div>
+                <div style={{}}>
                     <GridLister />
                 </div>
                 </MuiThemeProvider>

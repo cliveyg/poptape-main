@@ -2,10 +2,18 @@ import React, {Component} from 'react'
 import { withStyles } from '@material-ui/core/styles'
 import CustomizedSnackbars from '../information/CustomSnackbars'
 import Cookies from 'js-cookie'
-import Button from '@material-ui/core/Button'
-import Paper from '@material-ui/core/Paper'
+//import Button from '@material-ui/core/Button'
+//import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
-import nophoto from '../no-photo-icon-faded.png'
+//import nophoto from '../no-photo-icon-faded.png'
+import AuctionCard from './AuctionCard'
+import Card from '@material-ui/core/Card'
+//import CardActions from '@material-ui/core/CardActions'
+import CardContent from '@material-ui/core/CardContent'
+import InfoIcon from '@material-ui/icons/Info'
+import IconButton from '@material-ui/core/IconButton'
+import VisibilityIcon from '@material-ui/icons/Visibility'
+import Icon from '@material-ui/core/Icon'
 
 const styles = theme => ({
   dropzone: {
@@ -72,25 +80,58 @@ const styles = theme => ({
   },
   green: {
     color: "#349433"
+  },
+  main: {
+    display: "flex",
+    flexFlow: "row",
+  },
+  leftCol: {
+    order: 1,
+    flex: 1,
+    minWidth: 210,
+    //backgroundColor: "#ff8f00",
+    padding: 5
+  },
+  card: {
+    minWidth: 200,
+    minHeight: 250,
+  },
+  rightCol: {
+    order: 2,
+    flex: 1,
+    minWidth: "50%",
+    //backgroundColor: "#349433",
+    padding: 5
+  },
+  infoIcon: {
+    color: "#9cd0ee",
+    fontSize: "0.8em",
+  },
+  displayPrice: {
+    marginTop: "9px"
+  },
+  auctionType: {
+    fontSize: "1.2em",
+  },
+  watching: {
+    display: "inline-flex",
+    verticalAlign: "middle",
+    lineHeight: "1.6em",
+    color: "#1976d2",
+    fontSize: "0.8em",
+  },
+  watchingBlurb: {
+    marginLeft: 5,
   }
 });
 
-// the timer component for displaying countdowns
-class Timer extends Component {
-    render() {
-        return (
-            <div>
-                <h5 style={{ fontSize: 20, marginLeft:100 }}>
-                    {this.props.minutes}:{this.props.seconds}
-                </h5>
-            </div>
-        );
-   }
-}
 
 /*-----------------------------------------------------------------------------
  main component class
 -----------------------------------------------------------------------------*/
+//TODO: maybe wrap all auction components in a get auction data wrapper component 
+// to which is passed the auction component(s) to display. Saves repeating calls to 
+// the auction/auctionhouse microservices
 class DisplayMiniAuction extends Component {
 
     constructor(props){  
@@ -103,6 +144,8 @@ class DisplayMiniAuction extends Component {
         this.state = { showSnack: false,
                        showError: true,
                        duration: 1900,
+                       showTime: '',
+                       auctionType: 'English auction',
                        time: {}, 
                        seconds: 0,
                        itemId: this.props.itemId,
@@ -112,6 +155,7 @@ class DisplayMiniAuction extends Component {
                        auction: {} }
 
         this.startTimer = this.startTimer.bind(this)
+        this.displayTimer = this.displayTimer.bind(this)
 
         // check for passed in item_id
         if (this.props.itemId) {
@@ -120,9 +164,9 @@ class DisplayMiniAuction extends Component {
             const setOriginalTime = () => {
                 // get end time and find seconds to go
                 let t1 = new Date(this.state.currentLot.end_time)
-                console.log(t1.getTime())
+                //console.log(t1.getTime())
                 let now = new Date().getTime()
-                console.log(now)
+                //console.log(now)
                 let diff = t1.getTime() - now
 
                 this.setState({ seconds: diff/1000 },
@@ -131,7 +175,8 @@ class DisplayMiniAuction extends Component {
 
             const setCurrentLot = (lot) => {
                 this.setState({ currentLot: lot },
-                              () => { setOriginalTime() })
+                              () => { setOriginalTime()
+                                      this.displayTimer() })
             }
 
             const request = require('superagent')
@@ -143,7 +188,7 @@ class DisplayMiniAuction extends Component {
                    .then(res => {
                         this.setState({ auction: res.body.auction },
                                       () => { 
-                                            console.log(this.state.auction)
+                                            //console.log(this.state.auction)
                                             // need to set the current lot
                                             const lots = this.state.auction.lots
                                             const itemId = this.state.itemId
@@ -185,8 +230,15 @@ class DisplayMiniAuction extends Component {
         this.timer = 0
         //this.startTimer = this.startTimer.bind(this)
         this.countDown = this.countDown.bind(this)
+        this.numberWithCommas = this.numberWithCommas.bind(this)
+        //this.displayTimer = this.displayTimer.bind(this)
         //this.startTimer()
     }
+
+    numberWithCommas = (n) => {
+            return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
 
     secondsToTime = (secs) => {
 
@@ -261,45 +313,140 @@ class DisplayMiniAuction extends Component {
         }
     }
 
+    displayTimer = () => {
+
+        if (this.state.currentLot.end_time && 
+            new Date(this.state.currentLot.end_time).getTime() < new Date().getTime()) {
+           return(
+                <Typography style={{color: "#c9171f"}} variant="h5">
+                    <span>Auction finished!<br /></span>
+                </Typography>
+            )            
+        }
+
+        if (this.state.time.d > 1) {
+           return( 
+                <Typography variant="subtitle1">
+                    <span>Time left: &nbsp;{this.state.time.d}d {this.state.time.h}h<br /></span>
+                </Typography>
+            )
+        } else if (this.state.time.d === 1) {
+            return(
+                <Typography variant="subtitle1">
+                    <span>Time left: &nbsp;{this.state.time.d}d {this.state.time.h}h {this.state.time.m}m<br /></span>
+                </Typography>
+            )
+        } else if (this.state.time.d === 0) {
+            return(
+                <Typography variant="subtitle1">
+                    <span>Time left: &nbsp;{this.state.time.h}h {this.state.time.m}m {this.state.time.s}s<br /></span>
+                </Typography>
+             )
+        } else if (this.state.time.d === 0 && this.state.time.h === 0) {
+            return(
+                <Typography variant="subtitle1">
+                    <span>Time left: &nbsp;{this.state.time.m}m {this.state.time.s}s<br /></span>
+                </Typography>
+             )            
+        }
+    }
+
     render() {
         const key_date = this.state.date
         const { classes } = this.props
+        let displayPrice = null
+        let reserveMessage = null
+
+        // set some display prices here
+        if (this.state.currentLot.current_price) {
+            displayPrice = this.state.currentLot.current_price
+            displayPrice = this.numberWithCommas(displayPrice)
+        } else if (this.state.currentLot.start_price) {
+            displayPrice = this.state.currentLot.start_price
+            displayPrice = this.numberWithCommas(displayPrice)
+        }
+
+        if (this.state.currentLot.reserve_price &&
+            this.state.currentLot.current_price && 
+            this.state.currentLot.reserve_price > this.state.currentLot.current_price ) {
+            reserveMessage = 'Reserve not met'
+        } else if (this.state.currentLot.reserve_price) {
+            reserveMessage = 'Reserve not met'
+        } else if (this.state.currentLot.reserve_price && 
+                   this.state.currentLot.current_price &&
+                   this.state.currentLot.current_price >= this.state.currentLot.reserve_price ) {
+            reserveMessage = 'Reserve met'
+        }
 
         return (
             <div>
             {this.state.showError ?
                 <div>
-                    <Typography variant="h5" component="h5">
+                    <Typography variant="h5">
                         Item not supplied<br />
                     </Typography>
                 </div>
             :
-                <div>
-                    <div>
-                        <Typography variant="h5" component="h5">
-                            <b>Auction Me Baby!</b><br /><br />
-                        </Typography>
-                        {this.state.time.d > 1 ?
-                        <span>Time left: &nbsp;{this.state.time.d}d {this.state.time.h}h<br /></span>
-                        :
-                        <span>Time left: &nbsp;{this.state.time.d}d {this.state.time.h}h {this.state.time.m}m {this.state.time.s}s<br /></span>
-                        }
-                        {this.state.currentLot.start_price > 0 ?
-                            <>
-                            <h2>£{this.state.currentLot.start_price}</h2>
-                            </>
-                        :
-                            <>
-                            <span className={classes.orange}>No starting price!</span><br />
-                            </>
-                        }
-                        {!this.state.currentLot.reserve_price ?
-                            <>
-                            <span className={classes.red}>No reserve!</span><br />
-                            </>
-                        :
-                            null
-                        }
+                <div className={classes.main}>
+                    <div className={classes.leftCol}>
+                        <Card className={classes.card}>
+                            <CardContent>
+                                <Typography variant="h5">
+                                    <span className={classes.auctionType}>{this.state.auctionType}</span>
+                                    <IconButton aria-label={`Info about auction type`} className={classes.infoIcon}>
+                                        <InfoIcon />
+                                    </IconButton>
+                                    <br />
+                                </Typography>
+                                {this.displayTimer()}
+                                {displayPrice ?
+                                    <>
+                                    <Typography variant="h4" className={classes.displayPrice}>
+                                        £{displayPrice}
+                                    </Typography>
+                                    </>
+                                :
+                                    <>
+                                    <Typography variant="h5" className={classes.displayPrice}>
+                                        <span className={classes.orange}>No starting price!</span><br />
+                                    </Typography>
+                                    </>
+                                }
+                                {!reserveMessage ?
+                                    <>
+                                    <Typography variant="subtitle1">
+                                        <span className={classes.red}>No reserve!</span><br />
+                                    </Typography>
+                                    </>
+                                :
+                                null
+                                }
+                                {reserveMessage === "Reserve met" ?
+                                    <>
+                                    <Typography variant="subtitle1">
+                                        <span className={classes.green}>{reserveMessage}</span><br />
+                                    </Typography>
+                                    </> 
+                                :
+                                null
+                                }
+                                {reserveMessage === "Reserve not met" ?
+                                    <>
+                                    <Typography variant="subtitle1">
+                                        <span className={classes.orange}>{reserveMessage}</span><br />
+                                    </Typography>
+                                    </>
+                                : 
+                                null                                    
+                                }
+                                <div color='primary' className={classes.watching}>
+                                        <Icon><VisibilityIcon /></Icon><span className={classes.watchingBlurb}> 12 people watching<br /></span>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+                    <div className={classes.rightCol}>
+                        <AuctionCard />
                     </div>
                 </div>
             }
