@@ -24,6 +24,7 @@
     "react-image-gallery": "^0.9.1",
     "react-material-ui-form": "^1.1.4",
     "react-responsive-carousel": "^3.1.50",
+    "react-router-dom": "^5.1.2",
     "react-scripts": "3.0.1",
     "sharp": "^0.23.1",
     "superagent": "^5.1.0",

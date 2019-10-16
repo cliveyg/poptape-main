@@ -24,6 +24,9 @@ const styles = theme => ({
   itemName: {
     fontStyle: "italic"
   },
+  compTitle: {
+    fontSize: "1.2em",
+  },
 /*
   dropzoneParagraphClass: {
     fontSize: 12,
@@ -228,6 +231,7 @@ class CreateItemForm extends Component {
                        duration: 1900,
                        openUpload: false,
                        showCats: true,
+                       chosenCat: '',
                        topLevelCat: 'nowt',
                        topLevelCatArray: loadCategory(topLevelCats),
                        secondLevelCatArray: '',
@@ -296,6 +300,7 @@ class CreateItemForm extends Component {
 
         // load the form with correct fields for 2nd level category
         if (key === "secondLevelCat" && value === "cars:21000") {
+            this.setState({ chosenCat: value })
             this.setState({ formFields: carFields },
                           () => {
                             this.setState({ formBuilderTitle: "Car Information" })
@@ -303,6 +308,7 @@ class CreateItemForm extends Component {
                             this.setState({ showForm: true })
                           })
         } else if (key === "secondLevelCat") {
+            this.setState({ chosenCat: value })
             this.setState({ formFields: standardFields },
                           () => this.setState({ showForm: true }))
         }
@@ -318,62 +324,65 @@ class CreateItemForm extends Component {
     // upload images to s3 bucket. 
     onSubmit = model => {
         const request = require('superagent')
-        model["category"] = this.state.secondLevelCategory
-        this.setState({ model: model })
-        request.post('/items')
-               .send(JSON.stringify(model))
-               .set('Accept', 'application/json')
-               .set('Content-Type', 'application/json')
-               .set('x-access-token', Cookies.get('access-token'))
-               .then(res => {
-                        let urls = res.body.s3_urls
-                        this.setState({
-                            urls: [ ...this.state.urls, urls]
-                        })
-                        this.setState({ itemId: res.body.item_id })       
-                        this.setState({ bucketURL: res.body.bucket_url })
-                        const peckish = {
-                            variant: "success",
-                            message: "Product created"
+        //model["category"] = this.state.secondLevelCategory
+        model["category"] = this.state.chosenCat
+        this.setState({ model: model },
+        () => {
+            request.post('/items')
+                   .send(JSON.stringify(model))
+                   .set('Accept', 'application/json')
+                   .set('Content-Type', 'application/json')
+                   .set('x-access-token', Cookies.get('access-token'))
+                   .then(res => {
+                            let urls = res.body.s3_urls
+                            this.setState({
+                                urls: [ ...this.state.urls, urls]
+                            })
+                            this.setState({ itemId: res.body.item_id })       
+                            this.setState({ bucketURL: res.body.bucket_url })
+                            const peckish = {
+                                variant: "success",
+                                message: "Product created"
+                            }
+                            this.setState({ peckish: peckish }, () => {
+                                this.openSnack()
+                                this.setState({ showForm: false },
+                                              () => {
+                                                        this.setState({ showCats: false })
+                                                        this.setState({ showDropzone: true })
+                                                    }) 
+                            })                    
+                    })
+                   .catch(err => {
+                        console.log(err)
+                        if (err.status === 400) {
+                            const peckish = {
+                                variant: "warning",
+                                message: "Some of your fields are incorrect"
+                            }
+                            this.setState({ peckish: peckish })
+                        } else if (err.status === 401) {
+                            const peckish = {
+                                variant: "error",
+                                message: "Sorry Dave, I can't let you do that"
+                            }
+                            this.setState({ peckish: peckish })
+                        } else if (err.status === 502) {
+                            const peckish = {
+                                variant: "error",
+                                message: "Computer says no"
+                            }
+                            this.setState({ peckish: peckish })
+                        } else {
+                            const peckish = {
+                                variant: "warning",
+                                message: "Something went bang"
+                            }
+                            this.setState({ peckish: peckish })
                         }
-                        this.setState({ peckish: peckish }, () => {
-                            this.openSnack()
-                            this.setState({ showForm: false },
-                                          () => {
-                                                    this.setState({ showCats: false })
-                                                    this.setState({ showDropzone: true })
-                                                }) 
-                        })                    
-                })
-               .catch(err => {
-                    console.log(err)
-                    if (err.status === 400) {
-                        const peckish = {
-                            variant: "warning",
-                            message: "Some of your fields are incorrect"
-                        }
-                        this.setState({ peckish: peckish })
-                    } else if (err.status === 401) {
-                        const peckish = {
-                            variant: "error",
-                            message: "Sorry Dave, I can't let you do that"
-                        }
-                        this.setState({ peckish: peckish })
-                    } else if (err.status === 502) {
-                        const peckish = {
-                            variant: "error",
-                            message: "Computer says no"
-                        }
-                        this.setState({ peckish: peckish })
-                    } else {
-                        const peckish = {
-                            variant: "warning",
-                            message: "Something went bang"
-                        }
-                        this.setState({ peckish: peckish })
-                    }
-                    this.openSnack()
-                });
+                        this.openSnack()
+                    });
+        });
     }
 
     // open snackbar
@@ -573,11 +582,11 @@ class CreateItemForm extends Component {
             <Paper className={classes.root}>
                 {this.state.showCats ?
                     <>
-                    <Typography variant="h5" component="h5">
-                        Create Product
+                    <Typography className={classes.compTitle} variant="h4" component="h4">
+                        Create product
                     </Typography>
                     <Typography component="p">
-                        Enter an item into the system.
+                        <br />Enter an item into the system.
                     </Typography>
                     <br />
                     <FormLabel component="legend">Product categories

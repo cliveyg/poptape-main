@@ -14,6 +14,7 @@ import InfoIcon from '@material-ui/icons/Info'
 import IconButton from '@material-ui/core/IconButton'
 import VisibilityIcon from '@material-ui/icons/Visibility'
 import Icon from '@material-ui/core/Icon'
+import CircularProgress from '@material-ui/core/CircularProgress'
 
 const styles = theme => ({
   dropzone: {
@@ -41,6 +42,10 @@ const styles = theme => ({
   buttons: {
     float: "right",
     marginLeft: 20
+  },
+  progress: {
+    verticalAlign: "middle",
+    textAlign: "center"
   },
   imageWrapper: {
     display: "flex",
@@ -159,7 +164,7 @@ class DisplayMiniAuction extends Component {
 
         // check for passed in item_id
         if (this.props.itemId) {
-            this.state.showError = false
+            //this.state.showError = false
 
             const setOriginalTime = () => {
                 // get end time and find seconds to go
@@ -180,12 +185,14 @@ class DisplayMiniAuction extends Component {
             }
 
             const request = require('superagent')
-            const auctionhouseURL = '/auctionhouse/item/'+this.state.itemId
+            const auctionhouseURL = '/auctionhouse/auction/item/'+this.state.itemId
             request.get(auctionhouseURL)
                    .set('Accept', 'application/json')
                    .set('Content-Type', 'application/json')
                    .set('x-access-token', Cookies.get('access-token'))
                    .then(res => {
+                        console.log("Auction data found!!!")
+                        this.state.showError = false
                         this.setState({ auction: res.body.auction },
                                       () => { 
                                             //console.log(this.state.auction)
@@ -381,10 +388,17 @@ class DisplayMiniAuction extends Component {
         return (
             <div>
             {this.state.showError ?
-                <div>
-                    <Typography variant="h5">
-                        Item not supplied<br />
-                    </Typography>
+                <div style={{width: "100%", margin: 6 }}>
+                    <Card className={classes.card}>
+                        <CardContent>
+                            <Typography variant="h5">
+                                Auction details...<br />
+                            </Typography>
+                            <div className={classes.progress}>
+                            <br /><br /><CircularProgress />
+                            </div>
+                        </CardContent>
+                    </Card>
                 </div>
             :
                 <div className={classes.main}>

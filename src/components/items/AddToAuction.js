@@ -132,7 +132,7 @@ class AddToAuction extends Component {
         model['item_id'] = this.state.itemId
         this.setState({ model: model })
         let request = require('superagent')
-        request.post('/auctionhouse/solo/auction')
+        request.post('/auctionhouse/solo/auction/')
                .send(JSON.stringify(model))
                .set('Accept', 'application/json')
                .set('Content-Type', 'application/json')

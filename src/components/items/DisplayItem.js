@@ -15,6 +15,9 @@ import AuctionOptions from '../auction/AuctionOptions'
 import DisplayFields from './DisplayFields'
 //import '../../Poptape.css'
 
+//import { Redirect } from 'react-router-dom'
+//import {withRouter} from 'react-router-dom'
+
 const dStyles = theme => ({
   displayLinebreak: {
     fontSize: "0.8em",
@@ -96,6 +99,7 @@ class DisplayItem extends Component {
             "variant": "info",
             "message": "Added to auction"
         }
+        //this.props.history.push("/item/dsaddasdaddwqd")
 
         this.state = { showSnack: false,
                        showError: true,
@@ -252,4 +256,5 @@ class DisplayItem extends Component {
     }
 }
 
+//export default withRouter(withStyles(dStyles)(DisplayItem))
 export default withStyles(dStyles)(DisplayItem)

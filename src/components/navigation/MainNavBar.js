@@ -15,10 +15,13 @@ import SearchIcon from '@material-ui/icons/Search'
 import AccountCircle from '@material-ui/icons/AccountCircle'
 import Launch from '@material-ui/icons/Launch'
 import PowerSettingsNew from '@material-ui/icons/PowerSettingsNew'
+import FaceIcon from '@material-ui/icons/Face'
 import Input from '@material-ui/icons/Input'
 import MailIcon from '@material-ui/icons/Mail'
 import NotificationsIcon from '@material-ui/icons/Notifications'
 import MoreIcon from '@material-ui/icons/MoreVert'
+
+import { Link } from "react-router-dom"
 
 import LoginDialog from '../modals/Login'
 import SignupDialog from '../modals/Signup'
@@ -58,6 +61,20 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.up('sm')]: {
       display: 'block',
     },
+  },
+  linky: {
+    color: "white",
+    "&:visited": {
+      color: "white",
+    },
+    textDecoration: "none",
+  },
+  mlinky: { 
+    color: "inherit",
+    "&:visited": {
+      color: "inherit",
+    },
+    textDecoration: "none",
   },
   search: {
     position: 'relative',
@@ -119,8 +136,12 @@ export default function MainNavBar() {
     const [username, setUsername] = React.useState(Cookies.get('username'));
     const [showLoginPopup, setLoginPopup] = React.useState(false)
     const [showSignupPopup, setSignupPopup] = React.useState(false)
+    const [userLink, setUserLink] = React.useState('/user/')
 
     function handleProfileMenuOpen(event) {
+        if (loggedIn) {
+            setUserLink('/user/'+Cookies.get('username'))
+        }        
         setAnchorEl(event.currentTarget);
     }
 
@@ -134,12 +155,18 @@ export default function MainNavBar() {
     }
 
     function handleMobileMenuOpen(event) {
+        if (loggedIn) {
+            setUserLink('/user/'+Cookies.get('username'))
+        }
         setMobileMoreAnchorEl(event.currentTarget);
     }
 
     function toggleLoggedIn() {
         setUsername(Cookies.get('username'))
         setLoggedIn(Cookies.get('access-token') ? true : false)
+        if (loggedIn) {
+            setUserLink('/user/'+Cookies.get('username'))
+        }
     }
 
     function togglePopup(box) {
@@ -153,6 +180,7 @@ export default function MainNavBar() {
     }
 
   const menuId = 'primary-search-account-menu';
+  //const userLink = '/user/'+username
   const renderMenu = (
     <Menu
       anchorEl={anchorEl}
@@ -163,8 +191,8 @@ export default function MainNavBar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem onClick={handleMenuClose}><Link className={classes.mlinky} to={userLink}>Profile</Link></MenuItem>
+      <MenuItem onClick={handleMenuClose}><Link className={classes.mlinky} to={userLink+'/account'}>My account</Link></MenuItem>
     </Menu>
   );
 
@@ -215,6 +243,20 @@ export default function MainNavBar() {
         </IconButton>
         <p>Notifications</p>
       </MenuItem>
+      <Link className={classes.mlinky} to={userLink}>
+      <MenuItem onClick={handleProfileMenuOpen}>
+        <IconButton
+          aria-label="account of current user"
+          aria-controls="primary-search-account-menu"
+          aria-haspopup="true"
+          color="inherit"
+        >
+          <FaceIcon />
+        </IconButton>
+        <p>Profile</p>
+      </MenuItem>
+      </Link>
+      <Link className={classes.mlinky} to={userLink+'/account'}>
       <MenuItem onClick={handleProfileMenuOpen}>
         <IconButton
           aria-label="account of current user"
@@ -224,8 +266,9 @@ export default function MainNavBar() {
         >
           <AccountCircle />
         </IconButton>
-        <p>Profile</p>
+        <p>Account</p>
       </MenuItem>
+      </Link>
       <MenuItem onClick={() => togglePopup("login")}>
         <IconButton
           aria-label="account of current user"
@@ -269,7 +312,7 @@ export default function MainNavBar() {
             <BlurOn />
           </IconButton>
           <Typography className={classes.title} variant="h6" noWrap>
-            Poptape Auctions
+            <Link className={classes.linky} to='/'>Poptape Auctions</Link>
           </Typography>
           <div className={classes.search}>
             <div className={classes.searchIcon}>

@@ -134,7 +134,8 @@ export default function SellerInfoCard(props) {
     // only call other microservices if we have a public_id
     if (!loaded && props.publicId) {
         let p = Promise.resolve()
-        p = p.then(() => {
+        //p = p.then(() => {
+        p.then(() => {
             return callMicroservices()
         })
         .then(res => {

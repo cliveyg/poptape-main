@@ -30,7 +30,7 @@ const useStyles = makeStyles({
 });
 
 export default function DisplayFields(props) {
-    const classes = useStyles();
+    const classes = useStyles()
   
     const [showCard, setShowCard] = useState(false)
     //const [username, setUsername] = useState(null)

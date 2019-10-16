@@ -63,6 +63,12 @@ class FormBuilder extends Component {
         })
     }
 
+    setCurrency = (v, key) => {
+        this.setState({
+            [key]: v
+        })
+    }
+
     clearForm = e => {
         e.preventDefault()
         const keys = Object.keys(this.state)
@@ -268,7 +274,8 @@ class FormBuilder extends Component {
                         outputFormat="number"
                         decimalCharacter="."
                         digitGroupSeparator=","
-                        onChange={(e) => {this.onChange(e, key)}}
+                        //onChangeValue={(e) => {this.onChange(e, key)}}
+                        onChange={(event, value) => this.setCurrency(value, key)}
                     />
                     <br />
                     </div>                
