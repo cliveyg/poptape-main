@@ -1,24 +1,23 @@
 import React, {Component} from 'react'
 import { withStyles } from '@material-ui/core/styles'
 import CustomizedSnackbars from '../information/CustomSnackbars'
+import DisplayItem from '../items/DisplayItem'
 import GridList from '@material-ui/core/GridList'
 import GridListTile from '@material-ui/core/GridListTile'
 import GridListTileBar from '@material-ui/core/GridListTileBar'
+//import ListSubheader from '@material-ui/core/ListSubheader'
 import IconButton from '@material-ui/core/IconButton'
 import InfoIcon from '@material-ui/icons/Info'
 import Paper from '@material-ui/core/Paper'
 import Cookies from 'js-cookie'
+//import nophoto from '../no-photo-icon.png'
 import nophoto from '../no-photo-icon-faded.png'
-import Typography from '@material-ui/core/Typography'
-import { withRouter } from 'react-router-dom'
-import compose from 'recompose/compose'
-import { Button } from '@material-ui/core'
-
-import CircularProgress from '@material-ui/core/CircularProgress'
+//import Typography from '@material-ui/core/Typography'
 
 const styles = theme => ({
   root: {
     padding: theme.spacing(3, 2),
+    //height: "90%",
   },
   divbuttons: {
     width: "100%",
@@ -34,12 +33,12 @@ const styles = theme => ({
     justifyContent: 'space-around',
     overflow: 'hidden',
     backgroundColor: theme.palette.background.paper,
-  },
-  gridTitle: {
-    fontSize: "1.2em",
+    //height: '100%',
   },
   gridList: {
     width: "100%",
+    //width: 600,
+    //height: 450,
     height: '100%',
     "&:hover": {
         cursor: 'pointer'
@@ -48,23 +47,13 @@ const styles = theme => ({
   icon: {
     color: 'rgba(255, 255, 255, 0.54)',
   },
-  progress: {
-    verticalAlign: "middle",
-    textAlign: "center"
-  },
-  title: {
-    fontSize: "1.2em",
-  },
-  createButt: {
-    textTransform: "none"
-  }
 });
 
-class MyItemsGrid extends Component {
+class HorizontalGridLister extends Component {
 
     constructor(props) {
         super(props)
-        console.log("Initialising MyItemsGrid")
+        console.log("Initialising HorizontalGridLister")
 
         const peckish = {
             "variant": "info",
@@ -72,13 +61,12 @@ class MyItemsGrid extends Component {
         }
 
         this.state = { showSnack: false,
-                       showGrid: false,
-                       showLoader: true,
-                       showEmpty: false,
+                       showGrid: true,
                        itemsURL: this.props.itemsURL || '/items',
                        fotosURL: this.props.fotosURL || '/fotos/item/',
                        duration: 1900,
                        item: '',
+                       showItem: false,
                        blurb: this.props.blurb || 'Items',
                        items: [],
                        updated: [],
@@ -93,10 +81,7 @@ class MyItemsGrid extends Component {
                 sortedArray.sort(function(a,b){
                     return new Date(b.created) - new Date(a.created)
                 })
-                this.setState({ sorted: sortedArray },
-                              () => { this.setState({showLoader: false},
-                                () => { this.setState({showGrid: true}) })
-                              })
+                this.setState({ sorted: sortedArray })
             })
             return
         }
@@ -133,15 +118,7 @@ class MyItemsGrid extends Component {
                 })
                .catch(err => {
                     console.log(err)
-                    if (err.status === 404) {
-                        const peckish = {
-                            variant: "warning",
-                            message: "Hmmm, there's nothing here yet"
-                        }                        
-                        this.setState({ peckish: peckish },
-                            () => { this.setState({showLoader: false},
-                                () => { this.setState({ showEmpty: true })})})
-                    } else if (err.status === 401) {
+                    if (err.status === 401) {
                         const peckish = {
                             variant: "error",
                             message: "Sorry Dave, I can't let you do that"
@@ -183,11 +160,21 @@ class MyItemsGrid extends Component {
     }
 
     selectTile = (item) => {
-        const redirectURL = '/item/'+item.item_id+'/'+encodeURI(item.name)
-        this.props.history.push({
-            pathname: redirectURL,
-            state: { item: item }
-        })
+        const displayItem = 
+            <div>
+            <DisplayItem 
+                item = {item}
+            />
+            </div>    
+        this.setState({ item: displayItem },
+                      () => {
+                        this.setState({ showGrid: false },
+                                      () => {
+                                        this.setState({ showItem: true })
+                                      })
+                      })
+        
+         
     }    
 
     render() {
@@ -195,11 +182,12 @@ class MyItemsGrid extends Component {
         return (
             <div>
             <Paper className={classes.root}>
-            {this.state.showGrid ?
-                <div>
-                <Typography className={classes.gridTitle}>
-                    My items
+                { /*
+                <Typography variant="h5" component="h5">
+                    {this.state.blurb}
                 </Typography>
+                */ }                
+            {this.state.showGrid ?
                 <div className={classes.gridRoot}>
                   <GridList cellHeight={180} cols={4} className={classes.gridList}>
                     {this.state.sorted.map(item => (
@@ -208,10 +196,10 @@ class MyItemsGrid extends Component {
                         onClick={() => this.selectTile(item)}
                       >
                         {item.fotos[0] ?
-                                <img src={item.fotos[0].metadata.s3_url} alt='' />
+                            <img src={item.fotos[0].metadata.s3_url} alt='' />
                         :
                             <div style={{ textAlign: 'center', height: '100%', width: 'auto' }}>
-                                    <img src={nophoto} alt='' style={{height: '100%', width: 'auto'}}/>
+                                <img src={nophoto} alt='' style={{height: '100%', width: 'auto'}}/>
                             </div>
                         }
                         <GridListTileBar
@@ -227,38 +215,12 @@ class MyItemsGrid extends Component {
                     ))}
                   </GridList>
                 </div>
-                </div>
             : null
             }
-            {this.state.showLoader ?
-            <div style={{ width: '100%' }}>
-                <Typography className={classes.title} color="textSecondary" gutterBottom>
-                  My items
-                </Typography>
-                <div className={classes.progress}>
-                    <br /><CircularProgress />
+            {this.state.showItem ?
+                <div>
+                    {this.state.item}
                 </div>
-            </div>
-            : null
-            }
-            {this.state.showEmpty ?
-            <div style={{ width: '100%' }}>
-                <Typography className={classes.title} gutterBottom>
-                  My items
-                </Typography>
-                <Typography variant="body1" color="textSecondary" gutterBottom>
-                  Eeek, looks like you don't have any items yet.<br /><br />
-                </Typography>
-                <Button
-                    variant="outlined"
-                    color="secondary"
-                    className={classes.createButt}
-                    size="large"
-                        onClick={() => this.props.history.push('/item/create')}
-                >
-                    Create an item
-                </Button>
-            </div>
             : null
             }
             </Paper>
@@ -277,4 +239,4 @@ class MyItemsGrid extends Component {
 
 }
 
-export default compose(withStyles(styles))(withRouter(MyItemsGrid))
+export default withStyles(styles)(GridBuilder)

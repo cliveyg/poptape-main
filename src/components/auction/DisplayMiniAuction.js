@@ -1,12 +1,14 @@
 import React, {Component} from 'react'
 import { withStyles } from '@material-ui/core/styles'
 import CustomizedSnackbars from '../information/CustomSnackbars'
-import Cookies from 'js-cookie'
+//import Cookies from 'js-cookie'
 //import Button from '@material-ui/core/Button'
 //import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 //import nophoto from '../no-photo-icon-faded.png'
 import AuctionCard from './AuctionCard'
+import Timer from './Timer'
+import SellerButtons from './SellerButtons'
 import Card from '@material-ui/core/Card'
 //import CardActions from '@material-ui/core/CardActions'
 import CardContent from '@material-ui/core/CardContent'
@@ -149,39 +151,29 @@ class DisplayMiniAuction extends Component {
         this.state = { showSnack: false,
                        showError: true,
                        duration: 1900,
-                       showTime: '',
                        auctionType: 'English auction',
-                       time: {}, 
-                       seconds: 0,
                        itemId: this.props.itemId,
+                       timerComponent: 'Time passes',
+                       itemOwner: this.props.itemOwner,
                        date: new Date().getTime(),
                        peckish: peckish,
                        currentLot: {},
                        auction: {} }
 
-        this.startTimer = this.startTimer.bind(this)
-        this.displayTimer = this.displayTimer.bind(this)
-
         // check for passed in item_id
         if (this.props.itemId) {
-            //this.state.showError = false
-
-            const setOriginalTime = () => {
-                // get end time and find seconds to go
-                let t1 = new Date(this.state.currentLot.end_time)
-                //console.log(t1.getTime())
-                let now = new Date().getTime()
-                //console.log(now)
-                let diff = t1.getTime() - now
-
-                this.setState({ seconds: diff/1000 },
-                          () => { this.startTimer()})
-            }
 
             const setCurrentLot = (lot) => {
                 this.setState({ currentLot: lot },
-                              () => { setOriginalTime()
-                                      this.displayTimer() })
+                              () => { 
+                                      this.setState({
+                                          timerComponent: 
+                                              this.getTimerComp(
+                                                  this.state.currentLot.end_time
+                                              ) 
+                                      })
+                                    }
+                             )
             }
 
             const request = require('superagent')
@@ -189,13 +181,10 @@ class DisplayMiniAuction extends Component {
             request.get(auctionhouseURL)
                    .set('Accept', 'application/json')
                    .set('Content-Type', 'application/json')
-                   .set('x-access-token', Cookies.get('access-token'))
                    .then(res => {
-                        console.log("Auction data found!!!")
                         this.state.showError = false
                         this.setState({ auction: res.body.auction },
                                       () => { 
-                                            //console.log(this.state.auction)
                                             // need to set the current lot
                                             const lots = this.state.auction.lots
                                             const itemId = this.state.itemId
@@ -234,46 +223,27 @@ class DisplayMiniAuction extends Component {
         this.openSnack    = this.openSnack.bind(this)
         this.handleChange = this.handleChange.bind(this)
         this.handleButton = this.handleButton.bind(this)
-        this.timer = 0
-        //this.startTimer = this.startTimer.bind(this)
-        this.countDown = this.countDown.bind(this)
         this.numberWithCommas = this.numberWithCommas.bind(this)
-        //this.displayTimer = this.displayTimer.bind(this)
-        //this.startTimer()
+        this.onSubmit = this.onSubmit.bind(this)
     }
 
     numberWithCommas = (n) => {
             return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
-
-    secondsToTime = (secs) => {
-
-        let days = Math.floor(secs / (3600*24));
-        let hours = Math.floor(secs % (3600*24) / 3600);
-        let minutes = Math.floor(secs % 3600 / 60);
-        let seconds = Math.floor(secs % 60);
-        
-        let obj = {
-            "d": days,
-            "h": hours,
-            "m": minutes,
-            "s": seconds
-        };
-        return obj;
+    onSubmit = (bid) => {
+        console.log("YEEEEA")
+        console.log(bid)
     }
 
     handleChange = (e, key) => {
-
         const value = e.target.value
         this.setState({
             [key]: value
         })
-
     }
 
     handleButton = (e, aucType) => {
-
         console.log(":::::::")
         console.log(aucType)
     }
@@ -295,68 +265,16 @@ class DisplayMiniAuction extends Component {
         }
     }
 
-    componentDidMount() {
-        let timeLeftVar = this.secondsToTime(this.state.seconds)
-        this.setState({ time: timeLeftVar })
-    }
+    //componentDidMount() {
+    //}
 
-    startTimer = () => {
-        if (this.timer === 0 && this.state.seconds > 0) {
-            this.timer = setInterval(this.countDown, 1000);
-        }
-    }
-
-    countDown = () => {
-        // Remove one second, set state so a re-render happens.
-        let seconds = this.state.seconds - 1;
-        this.setState({
-            time: this.secondsToTime(seconds),
-            seconds: seconds,
-        })
-    
-        // Check if we're at zero.
-        if (seconds === 0) { 
-            clearInterval(this.timer);
-        }
-    }
-
-    displayTimer = () => {
-
-        if (this.state.currentLot.end_time && 
-            new Date(this.state.currentLot.end_time).getTime() < new Date().getTime()) {
-           return(
-                <Typography style={{color: "#c9171f"}} variant="h5">
-                    <span>Auction finished!<br /></span>
-                </Typography>
-            )            
-        }
-
-        if (this.state.time.d > 1) {
-           return( 
-                <Typography variant="subtitle1">
-                    <span>Time left: &nbsp;{this.state.time.d}d {this.state.time.h}h<br /></span>
-                </Typography>
-            )
-        } else if (this.state.time.d === 1) {
-            return(
-                <Typography variant="subtitle1">
-                    <span>Time left: &nbsp;{this.state.time.d}d {this.state.time.h}h {this.state.time.m}m<br /></span>
-                </Typography>
-            )
-        } else if (this.state.time.d === 0) {
-            return(
-                <Typography variant="subtitle1">
-                    <span>Time left: &nbsp;{this.state.time.h}h {this.state.time.m}m {this.state.time.s}s<br /></span>
-                </Typography>
-             )
-        } else if (this.state.time.d === 0 && this.state.time.h === 0) {
-            return(
-                <Typography variant="subtitle1">
-                    <span>Time left: &nbsp;{this.state.time.m}m {this.state.time.s}s<br /></span>
-                </Typography>
-             )            
-        }
-    }
+    getTimerComp = (endTime) => {
+        return ( 
+                <Timer
+                    endTime = {endTime}
+                />
+        )
+    } 
 
     render() {
         const key_date = this.state.date
@@ -412,7 +330,7 @@ class DisplayMiniAuction extends Component {
                                     </IconButton>
                                     <br />
                                 </Typography>
-                                {this.displayTimer()}
+                                {this.state.timerComponent}
                                 {displayPrice ?
                                     <>
                                     <Typography variant="h4" className={classes.displayPrice}>
@@ -460,7 +378,14 @@ class DisplayMiniAuction extends Component {
                         </Card>
                     </div>
                     <div className={classes.rightCol}>
-                        <AuctionCard />
+                        {!this.state.itemOwner ?
+                            <AuctionCard
+                                onSubmit = {(bid) => {this.onSubmit(bid)}}
+                                minBid = {10000}
+                            />
+                        :
+                            <SellerButtons />
+                        }
                     </div>
                 </div>
             }

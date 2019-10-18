@@ -1,12 +1,11 @@
-import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState } from 'react'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 
 import '../Poptape.css'
 import 'typeface-varela-round'
 import MainNavBar from '../components/navigation/MainNavBar'
+import DisplayItem from '../components/items/DisplayItem'
 import Paper from '@material-ui/core/Paper'
-import Typography from '@material-ui/core/Typography'
 
 const theme = createMuiTheme({
   typography: {
@@ -30,7 +29,57 @@ const theme = createMuiTheme({
   }
 })
 
-export default function ItemPage() {
+
+
+
+export default function ItemPage(props) {
+
+    const [item, setItem] = useState('')
+    const [gotItem, setGotItem] = useState(false)
+
+    function getItemData(iProps) {
+
+        if (typeof(iProps.location.state) === 'undefined') {
+            const request = require('superagent')
+            
+            request.get('/items/'+iProps.match.params.item_id)
+                   .set('Accept', 'application/json')
+                   .set('Content-Type', 'application/json')
+                   .then(res => {
+                        let rItem = res.body
+                        rItem['item_id'] = iProps.match.params.item_id
+                        request.get('/fotos/item/'+rItem.item_id)
+                               .set('Accept', 'application/json')
+                               .set('Content-Type', 'application/json')
+                               .then(res => {
+                                    rItem['fotos'] = res.body.fotos
+                                    setItem(rItem)
+                                    setGotItem(true)
+                                })
+                               .catch(err => {
+                                    if (err.status === 404) {
+                                        rItem['fotos'] = []
+                                        setItem(rItem)
+                                        setGotItem(true)
+                                    } else {
+                                        console.log(err)
+                                    }
+                                })
+                    })
+                   .catch(err => {
+                        console.log(err)
+                    })        
+        } else {
+            setItem(iProps.location.state.item)
+            setGotItem(true)
+        }
+
+    }
+
+    if (!gotItem) {
+        getItemData(props) 
+    }  
+
     return (
         <div style={{ width:"100%"}}>
             <MuiThemeProvider theme={theme}>
@@ -39,9 +88,12 @@ export default function ItemPage() {
             </header>
             <div>
             <Paper style={{ margin: 20 }}>
-                <Typography variant="h3">
-                    Items
-                </Typography>
+                {gotItem ?
+                    <DisplayItem
+                        item = {item}
+                    />
+                : null
+                }
             </Paper>
             </div>
             </MuiThemeProvider>

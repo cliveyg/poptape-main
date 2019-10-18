@@ -28,6 +28,7 @@ class LoginDialog extends Component {
         this.toggleModal  = this.toggleModal.bind(this)
         this.closeModal   = this.closeModal.bind(this)
         this.openSnack    = this.openSnack.bind(this)
+        this.getPublicId  = this.getPublicId.bind(this)
 
         // if we're already logged in and the user hit's the login/out
         // button then if we are logged in we just remove cookie and
@@ -35,6 +36,7 @@ class LoginDialog extends Component {
         if (this.state.loggedIn) {
             Cookies.remove('access-token')
             Cookies.remove('username')
+            Cookies.remove('public_id')
             this.closeModal()
         }
     }
@@ -66,6 +68,12 @@ class LoginDialog extends Component {
     closeModal() {
         this.props.loggedIn()    
         this.props.closePopup()
+    }
+
+    getPublicId(token) {
+        const tokenArray = token.split(".")
+        const base64decoded = JSON.parse(atob(tokenArray[1]))
+        return base64decoded.public_id
     }
 
     handleChange(event) {
@@ -100,6 +108,7 @@ class LoginDialog extends Component {
                .then(res => {
                     Cookies.set('access-token', res.body.token)             
                     Cookies.set('username', data.username)
+                    Cookies.set('public_id', this.getPublicId(res.body.token))
                     closeModal()
                 })
                .catch(err => {

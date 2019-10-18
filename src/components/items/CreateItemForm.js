@@ -12,6 +12,9 @@ import Select from '@material-ui/core/Select'
 import FormLabel from '@material-ui/core/FormLabel'
 import MenuItem from '@material-ui/core/MenuItem'
 import AddToAuction from './AddToAuction'
+import { withRouter } from 'react-router-dom'
+import compose from 'recompose/compose'
+
 
 const styles = theme => ({
   dropzone: {
@@ -710,31 +713,11 @@ class CreateItemForm extends Component {
                     </>
                     </div>                    
                     {this.state.progress > 99 ?
-                        <>
-                        { /*
-                        <Button
-                            className = {classes.dropbuttons}
-                            color = "primary"
-                            variant="contained"
-                            //onClick={alert("Continue!")}
-                        >
-                            Show My Items
-                        </Button>                        
-                        <Button
-                            className = {classes.dropbuttons}
-                            color = "primary"
-                            variant="contained"
-                            //onClick={alert("Continue!")}
-                        >
-                            Create Another Item
-                        </Button>
-                        */ 
-                        }
                         <AddToAuction 
                             itemId = {this.state.itemId} 
+                            itemName = {this.state.model.name}
                             onSuccess = {(worked) => {this.onSuccess(worked)}}
                         />
-                        </>
                     : null
                     }
                 </Paper>
@@ -756,4 +739,4 @@ class CreateItemForm extends Component {
     }
 }
 
-export default withStyles(styles)(CreateItemForm)
+export default compose(withStyles(styles))(withRouter(CreateItemForm))

@@ -8,6 +8,8 @@ import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 import AddBoxOutlinedIcon from '@material-ui/icons/AddBoxOutlined'
 import AddToPhotosOutlinedIcon from '@material-ui/icons/AddToPhotosOutlined'
+import { withRouter } from 'react-router-dom'
+import compose from 'recompose/compose'
 
 const styles = theme => ({
   dropzone: {
@@ -97,8 +99,12 @@ class AddToAuction extends Component {
                        showError: true,
                        showPaper: true,
                        duration: 1900,
-                       itemId: this.props.itemId, // || '956da742-5498-4b6a-8684-a75b69455d1e',
+                       itemId: this.props.itemId,
+                       itemName: this.props.itemName,
+                       itemsURL: '/user/'+Cookies.get('username')+'/items',
+                       showSuccessButtons: false,
                        auctionType: '',
+                       showAddToAuctionButtons: false,
                        showAuctionForm: false,
                        formTitle: 'Auction Details',
                        formBlurb: 'Add this item to an auction',
@@ -108,9 +114,9 @@ class AddToAuction extends Component {
                        model: {} }
 
         // check for passed in item_id
-        //if (!this.props.itemId) {
         if (this.props.itemId) {
             this.state.showError = false
+            this.state.showAddToAuctionButtons = true
             console.log("itemId is ["+this.state.itemId+"]")
         }
 
@@ -119,10 +125,44 @@ class AddToAuction extends Component {
         this.openSnack    = this.openSnack.bind(this)
         this.handleChange = this.handleChange.bind(this)
         this.handleButton = this.handleButton.bind(this)
+        this.onFail       = this.onFail.bind(this)
     }
 
     onSuccess = e => {
         if (this.props.onSuccess) this.props.onSuccess(this.state)
+        this.setState({ showAuctionForm: false },
+            () => { this.setState({ showAddToAuctionButtons: false },
+                () => { this.setState({ showSuccessButtons: true })})})
+    }
+
+    onFail = (err) => {
+        console.log(err)
+        if (err.status === 400) {
+            const peckish = {
+                variant: "warning",
+                message: "Some of your fields are incorrect"
+            }
+            this.setState({ peckish: peckish })
+        } else if (err.status === 401) {
+            const peckish = {
+                variant: "error",
+                message: "Sorry Dave, I can't let you do that"
+            }
+            this.setState({ peckish: peckish })
+        } else if (err.status === 502) {
+            const peckish = {
+                variant: "error",
+                message: "Computer says no"
+            }
+            this.setState({ peckish: peckish })
+        } else {
+            const peckish = {
+                variant: "warning",
+                message: "Something went bang"
+            }
+            this.setState({ peckish: peckish })
+        }
+        this.openSnack()
     }
 
     onSubmit = model => {
@@ -138,45 +178,32 @@ class AddToAuction extends Component {
                .set('Content-Type', 'application/json')
                .set('x-access-token', Cookies.get('access-token'))
                .then(res => {
-                        const peckish = {
-                            variant: "success",
-                            message: "Added to auction"
-                        }
-                        this.setState({ peckish: peckish }, () => {
-                            this.openSnack()
-                            this.setState({ showPaper: false })
-                            this.onSuccess(true)
-                        })
+                    const auction_id = res.body.auction_id
+                    const lot_id = res.body.lot_id
+                    // create auction on auctioneer microservice
+                    request.post('/auction/'+auction_id+'/'+lot_id)
+                           .send()
+                           .set('Accept', 'application/json')
+                           .set('Content-Type', 'application/json')
+                           .set('x-access-token', Cookies.get('access-token'))
+                           .then(res => {
+                                const peckish = {
+                                    variant: "success",
+                                    message: "Added to an auction"
+                                }
+                                this.setState({ peckish: peckish }, () => {
+                                    this.openSnack()
+                                    this.setState({ showPaper: false })
+                                    this.onSuccess(true)
+                                })
+                            })
+                            .catch(err => {
+                                this.onFail(err)
+                            })
                            
                 })
                .catch(err => {
-                    console.log(err)
-                    if (err.status === 400) {
-                        const peckish = {
-                            variant: "warning",
-                            message: "Some of your fields are incorrect"
-                        }
-                        this.setState({ peckish: peckish })
-                    } else if (err.status === 401) {
-                        const peckish = {
-                            variant: "error",
-                            message: "Sorry Dave, I can't let you do that"
-                        }
-                        this.setState({ peckish: peckish })
-                    } else if (err.status === 502) {
-                        const peckish = {
-                            variant: "error",
-                            message: "Computer says no"
-                        }
-                        this.setState({ peckish: peckish })
-                    } else {
-                        const peckish = {
-                            variant: "warning",
-                            message: "Something went bang"
-                        }
-                        this.setState({ peckish: peckish })
-                    }
-                    this.openSnack()
+                    this.onFail(err)
                 });
 
     }
@@ -196,6 +223,11 @@ class AddToAuction extends Component {
         console.log(aucType)
         //console.log(e)
         this.setState({ showAuctionForm: true })
+    }
+
+    handleSuccess = (e, destination) => {
+        console.log(":::: ^^^^^^^^^^^^^^^^^^^^^^^^^^^ ::::")
+        console.log("My destination is "+destination)
     }
 
     // open snackbar
@@ -222,53 +254,71 @@ class AddToAuction extends Component {
         // render the categories dropdowns and load form based on user selection
         return (
             <div>
-            {this.state.showError ?
             <Paper className={classes.root}>
+            {this.state.showError ?
                 <Typography variant="h5" component="h5">
                     No supplied Item ID<br />
                 </Typography>
-            </Paper>
-            :
-            <Paper className={classes.root}>
-                {this.state.showPaper ?
+            : null
+            }
+
+            {this.state.showAddToAuctionButtons ?
                 <>
-                { /*
-                <Typography variant="h5" component="h5">
-                    Auction Component<br /><br />
-                </Typography>
-                */ }
-                <Button
-                    className = {classes.dropbuttons}
-                    color = "primary"
-                    variant="contained"
-                    onClick={(e) => {this.handleButton(e, 'solo')}}
-                    endIcon={<AddBoxOutlinedIcon />}
-                >
-                    Sell Singly
-                </Button>                
-                <Button
-                    className = {classes.dropbuttons}
-                    color = "primary"
-                    variant="contained"
-                    onClick={(e) => {this.handleButton(e, 'multiple')}}
-                    endIcon={<AddToPhotosOutlinedIcon />}
-                >
-                    Sell As Part Of Multiple Auction
-                </Button>
-                {this.state.showAuctionForm ?
-                    <FormBuilder
-                        title = {this.state.formTitle}
-                        blurb = {this.state.formBlurb}
-                        model = {this.state.formFields}
-                        submitLabel = "Add"
-                        onSubmit = {(model) => {this.onSubmit(model)}}
-                    />
-                : null
-                }
+                    <Button
+                        className = {classes.dropbuttons}
+                        color = "primary"
+                        variant="contained"
+                        onClick={(e) => {this.handleButton(e, 'solo')}}
+                        endIcon={<AddBoxOutlinedIcon />}
+                    >
+                        Sell Singly
+                    </Button>                
+                    <Button
+                        className = {classes.dropbuttons}
+                        color = "primary"
+                        disabled = {true}
+                        variant="contained"
+                        onClick={(e) => {this.handleButton(e, 'multiple')}}
+                        endIcon={<AddToPhotosOutlinedIcon />}
+                    >
+                        Sell As Part Of Multiple Auction
+                    </Button>
                 </>
-                : null
-                }
-            </Paper>
+            : null
+            }
+    
+            {this.state.showAuctionForm ?
+                <FormBuilder
+                    title = {this.state.formTitle}
+                    blurb = {this.state.formBlurb}
+                    model = {this.state.formFields}
+                    submitLabel = "Add"
+                    onSubmit = {(model) => {this.onSubmit(model)}}
+                />
+            : null
+            }
+
+            {this.state.showSuccessButtons ?
+                <>
+                    <Button
+                        className = {classes.dropbuttons}
+                        color = "primary"
+                        variant="contained"
+                        //onClick={(e) => {this.handleSuccess(e, 'show')}}
+                        onClick={() => this.props.history.push(this.state.itemsURL)}
+                    >   
+                        Show My Items
+                    </Button>            
+                    <Button
+                        className = {classes.dropbuttons}
+                        color = "primary"
+                        variant="contained"
+                        onClick={() => this.props.history.push('/item/create')}
+                    >
+                        Create Another
+                    </Button>
+                </>
+            : null
             }
 
             {this.state.showSnack ?
@@ -280,9 +330,10 @@ class AddToAuction extends Component {
                 />
             : null
             }
+            </Paper>
             </div>
         );
     }
 }
 
-export default withStyles(styles)(AddToAuction)
+export default compose(withStyles(styles))(withRouter(AddToAuction))

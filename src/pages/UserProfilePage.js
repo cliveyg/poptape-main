@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 
@@ -49,9 +49,6 @@ export default function UserProfilePage() {
                 <Typography variant="body1">
                     <Link to='/' style={{ padding: 10 }}>
                         Home<br /> 
-                    </Link>
-                    <Link to='/item/gsjdhfgsjfdghs' style={{ padding: 10 }}>
-                        Item<br />
                     </Link>
                     <Link to={'/user/'+username+'/items'} style={{ padding: 10 }}>
                         My Items<br />

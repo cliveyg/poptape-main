@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import { withStyles } from '@material-ui/core/styles'
 import CustomizedSnackbars from '../information/CustomSnackbars'
-//import Cookies from 'js-cookie'
+import Cookies from 'js-cookie'
 //import Button from '@material-ui/core/Button'
 //import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
@@ -13,10 +13,7 @@ import SellerInfoCard from '../seller/SellerInfoCard'
 import AuctionOptions from '../auction/AuctionOptions'
 //import red from '@material-ui/core/colors/red'
 import DisplayFields from './DisplayFields'
-//import '../../Poptape.css'
-
-//import { Redirect } from 'react-router-dom'
-//import {withRouter} from 'react-router-dom'
+import BidPlayerLarge from '../auction/BidPlayerLarge'
 
 const dStyles = theme => ({
   displayLinebreak: {
@@ -99,11 +96,11 @@ class DisplayItem extends Component {
             "variant": "info",
             "message": "Added to auction"
         }
-        //this.props.history.push("/item/dsaddasdaddwqd")
 
         this.state = { showSnack: false,
                        showError: true,
                        newBadge: false,
+                       itemOwner: false,
                        duration: 1900,
                        item: this.props.item,
                        auctionType: '',
@@ -111,10 +108,15 @@ class DisplayItem extends Component {
                        peckish: peckish,
                        model: {} }
 
+        console.log("++++++++++++++++++++++++++++++++++++++++++++++")
+        console.log(this.state.item)
+
         // check for passed in item_id
         if (this.props.item) {
+            if (this.state.item.public_id === Cookies.get('public_id')) {
+                this.state.itemOwner = true
+            }
             this.state.showError = false
-            //console.log("itemId is ["+this.state.item.item_id+"]")
         }
 
         this.openSnack    = this.openSnack.bind(this)
@@ -213,14 +215,23 @@ class DisplayItem extends Component {
                         <div className={classes.auctionBox}>
                             <DisplayMiniAuction
                                 itemId = {this.state.item.item_id}
+                                itemOwner = {this.state.itemOwner}
                             />
-                            <SellerInfoCard
-                                publicId = {this.state.item.public_id}
-                            />
-                            <AuctionOptions
-                                publicId = {this.state.item.public_id}
-                                itemId = {this.state.item.item_id}
-                            />
+                            {!this.state.itemOwner ?
+                                <div>
+                                <SellerInfoCard
+                                    publicId = {this.state.item.public_id}
+                                />
+                                <AuctionOptions
+                                    publicId = {this.state.item.public_id}
+                                    itemId = {this.state.item.item_id}
+                                />
+                                </div>
+                            :
+                                <BidPlayerLarge
+                                    item = {this.state.item}
+                                />
+                            }
                         </div>
                         <div 
                             className={classes.carouselBox}

@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 
@@ -7,6 +7,7 @@ import 'typeface-varela-round'
 import MainNavBar from '../components/navigation/MainNavBar'
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
+import Cookies from 'js-cookie'
 
 const theme = createMuiTheme({
   typography: {
@@ -31,6 +32,8 @@ const theme = createMuiTheme({
 })
 
 export default function HomePage() {
+    const username = Cookies.get('username')
+    //2019-10-31T18:00:00Z
     return (
         <div style={{ width:"100%"}}>
             <MuiThemeProvider theme={theme}>
@@ -47,10 +50,13 @@ export default function HomePage() {
                     <Link to='/' style={{ padding: 10 }}>
                         Home<br />
                     </Link>
-                    <Link to='/item/gsjdhfgsjfdghs' style={{ padding: 10 }}>
-                        Item<br />
+                    <Link to={'/user/'+username+'/items'} style={{ padding: 10 }}>
+                        My Items<br />
                     </Link>
-                    <Link to='/user/mork' style={{ padding: 10 }}>
+                    <Link to='/item/create' style={{ padding: 10 }}>
+                        Create item<br />
+                    </Link>
+                    <Link to={'/user/'+username} style={{ padding: 10 }}>
                         Profile<br />
                     </Link>
                 </Typography>

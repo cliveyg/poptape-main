@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
-//import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
@@ -10,8 +9,7 @@ import blue from '@material-ui/core/colors/blue'
 import pink from '@material-ui/core/colors/pink'
 import SentimentSatisfiedAltIcon from '@material-ui/icons/SentimentSatisfiedAlt'
 import VisibilityIcon from '@material-ui/icons/Visibility'
-//import Icon from '@material-ui/core/Icon'
-//import IconButton from '@material-ui/core/IconButton'
+import CustomizedSnackbars from '../information/CustomSnackbars'
 
 const useStyles = makeStyles({
   card: {
@@ -29,14 +27,9 @@ const useStyles = makeStyles({
     fontSize: "0.8em",
   },
   watchThisButton: {
-    //backgroundColor: blue[300],
-    //color: "white",
-    //color: blue[300],
     color: blue[600],
-    //width: "100%",
     textTransform: "none",
     "&:hover": {
-      //backgroundColor: blue[900],
       backgroundColor: blue[300],
       color: "white"
     },    
@@ -46,7 +39,6 @@ const useStyles = makeStyles({
   },
   fieldSurround: {
     borderRadius: 5,
-    //backgroundColor: "#1976d2",
     backgroundColor: blue[300],
     paddingLeft: 35,
     paddingRight: 35,
@@ -64,66 +56,121 @@ const useStyles = makeStyles({
     marginBottom: 5,
     color: "white",
     "&:hover": {
-      //color: blue[900],
       backgroundColor: pink[500],
     },    
   }
 });
 
-const bidField =
-        <CurrencyTextField
-            //label="Bid"
-            variant="outlined"
-            value={0.00}
-            currencySymbol="£"
-            //minimumValue="0"
-            outputFormat="number"
-            decimalCharacter="."
-            //inputStyle={{ fontSize: '1.2em' }}
-            digitGroupSeparator=","
-            InputProps={{
-                classes: {
-                    input: {fontSize: 25},
-                },
-            }}
-            style={{ borderRadius: 4, padding: 7, backgroundColor: "#ffffff"}}
-            //onChange={(e) => {this.onChange(e, key)}}
-        />
+const peckish = {
+    "variant": "warning",
+    "duration": 1900,
+    "message": "You bid less than the minimum"
+}
 
 
 export default function AuctionCard(props) {
-  const classes = useStyles();
+    const classes = useStyles();
 
-  return (
-    <Card className={classes.card}>
-      <CardContent>
-        <div className={classes.fieldSurround}>
-            {bidField}
-        </div>
-        <div>
-          <Button
-            variant="contained"
-            className={classes.bidbutt}
-            startIcon={<SentimentSatisfiedAltIcon />}
-          >
-            Bid Now
-          </Button>
-        </div>
-        <Typography variant="body2" component="p">
-          Minimum bid is £1800
-        </Typography>
-        <div>
-            <Button
+    console.log("WHY???")
+
+    const [bidValue, setBidValue] = useState(0.00)
+    const [showSnack, setShowSnack] = useState(false)
+    const minBid = props.minBid
+    const formattedMinBid = numberWithCommas(props.minBid)
+
+    function numberWithCommas(n) {
+            return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    const bidField =
+            <CurrencyTextField
                 variant="outlined"
-                size="small"
-                className={classes.watchThisButton}
-                startIcon={<VisibilityIcon />}
-            >
-                Watch
-            </Button>
-        </div>
-      </CardContent>
-    </Card>
-  );
+                value={bidValue}
+                currencySymbol="£"
+                outputFormat="number"
+                decimalCharacter="."
+                digitGroupSeparator=","
+                InputProps={{
+                    classes: { 
+                        input: {fontSize: 25},
+                    },
+                }}
+                style={{ borderRadius: 4, padding: 7, backgroundColor: "#ffffff"}}
+                onChange={(event, value)=> onChange(value)}
+            />
+
+    function onChange(value) {
+        setBidValue(value)
+    }
+
+    function openSnack() {
+        if (showSnack === true) {
+            setShowSnack(false)
+            // absolutely horrible way to do this
+            // but callbacks in functional compo
+            // state vars are a right pita
+            setTimeout(function(){
+                setShowSnack(true)
+            }, 500);            
+        } else {
+            setShowSnack(true)
+        }
+    }
+
+    function onSubmit(e) {
+        // pass the bid value back up to parent
+        if (bidValue < minBid) {
+            openSnack()
+        } else {
+            if (props.onSubmit) props.onSubmit(bidValue)
+            setBidValue(0.00)
+        }
+    }
+
+    const keyDate = new Date().getTime()
+
+    return (
+        <>
+        <Card className={classes.card}>
+          <CardContent>
+            <div className={classes.fieldSurround}>
+                {bidField}
+            </div>
+            <div>
+              <Button
+                variant="contained"
+                className={classes.bidbutt}
+                startIcon={<SentimentSatisfiedAltIcon />}
+                onClick={(e) => onSubmit(e)}
+              >
+                Bid Now
+              </Button>
+            </div>
+            <Typography variant="body2" component="p">
+              Minimum bid is £{formattedMinBid}
+            </Typography>
+            <div>
+                <Button
+                    variant="outlined"
+                    size="small"
+                    className={classes.watchThisButton}
+                    startIcon={<VisibilityIcon />}
+                >
+                    Watch
+                </Button>
+            </div>
+          </CardContent>
+        </Card>
+        {showSnack ?
+            <CustomizedSnackbars
+                duration = {peckish.duration}
+                key_date = {keyDate}
+                variant  = {peckish.variant}
+                message  = {peckish.message}
+            />
+        : null
+        }
+        </>
+    );
 }
 

@@ -10,10 +10,8 @@ import Checkbox from '@material-ui/core/Checkbox'
 import Favorite from '@material-ui/icons/Favorite'
 import FavoriteBorder from '@material-ui/icons/FavoriteBorder'
 import CircularProgress from '@material-ui/core/CircularProgress'
-//import Cookies from 'js-cookie'
 import blue from '@material-ui/core/colors/blue'
-import avatar from '../sidimages.jpeg'
-import Avatar from '@material-ui/core/Avatar'
+import AvatarChooser from '../helpers/AvatarChooser'
 
 const useStyles = makeStyles({
   card: {
@@ -60,12 +58,6 @@ const useStyles = makeStyles({
     verticalAlign: "middle",
     height: "100%",
   },
-  bigAvatar: {
-    margin: 10,
-    marginRight: 20,
-    width: 60,
-    height: 60,
-  },
   userDetails: {
     order: 2,
     flex: 1,
@@ -79,8 +71,6 @@ export default function SellerInfoCard(props) {
     const [reviews, setReviews] = useState([])
     const [username, setUsername] = useState(null)
     const [loaded, setLoaded] = useState(false)
-
-    //console.log("PUB ID: "+props.publicId) 
 
     function callAuthy() {
         const request = require('superagent')
@@ -139,9 +129,7 @@ export default function SellerInfoCard(props) {
             return callMicroservices()
         })
         .then(res => {
-            //console.log(username)
-            //console.log(reviews)    
-            if (username && reviews.length > 0) {
+            if (username && reviews.length >= 0) {
                 setLoaded(true)
                 if (!showCard) {
                     setShowCard(true)
@@ -160,7 +148,7 @@ return (
         </Typography>
         <div className={classes.sellerContainer}>
             <div className={classes.avatarBox}>
-                <Avatar alt={username} src={avatar} className={classes.bigAvatar} />
+                <AvatarChooser avatarName="random" />
             </div>
             <div className={classes.userDetails}>
                 <Typography variant="h5" className={classes.username}>

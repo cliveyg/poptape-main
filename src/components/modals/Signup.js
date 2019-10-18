@@ -14,6 +14,7 @@ class SignupDialog extends Component {
         }
         Cookies.remove('access-token')
         Cookies.remove('username')
+        Cookies.remove('public')
 
         this.state = {username: "",
                       password: "",
@@ -26,12 +27,13 @@ class SignupDialog extends Component {
                       date: new Date().getTime(),
                       peckish: peckish};
 
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-        this.toggleSnack  = this.toggleSnack.bind(this);
-        this.toggleModal  = this.toggleModal.bind(this);
-        this.closeModal   = this.closeModal.bind(this);
-        this.openSnack  = this.openSnack.bind(this);
+        this.handleChange = this.handleChange.bind(this)
+        this.handleSubmit = this.handleSubmit.bind(this)
+        this.toggleSnack  = this.toggleSnack.bind(this)
+        this.toggleModal  = this.toggleModal.bind(this)
+        this.closeModal   = this.closeModal.bind(this)
+        this.openSnack  = this.openSnack.bind(this)
+        this.getPublicId  = this.getPublicId.bind(this)
     
     }
 
@@ -64,6 +66,12 @@ class SignupDialog extends Component {
         this.props.closePopup()
     }
 
+    getPublicId(token) {
+        const tokenArray = token.split(".")
+        const base64decoded = JSON.parse(atob(tokenArray[1]))
+        return base64decoded.public_id
+    }
+
     handleChange(event) {
         const target = event.target;
         const value = target.value;
@@ -93,6 +101,7 @@ class SignupDialog extends Component {
                .then(res => {
                     Cookies.set('access-token', res.body.token)
                     Cookies.set('username', data.username)
+                    Cookies.set('public_id', this.getPublicId(res.body.token))
                     const peckish = {
                         variant: "success",
                         message: "User [ "+data.username+" ] successfully created"
