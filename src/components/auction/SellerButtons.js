@@ -4,16 +4,14 @@ import Card from '@material-ui/core/Card'
 //import CardActions from '@material-ui/core/CardActions'
 import CardContent from '@material-ui/core/CardContent'
 import Button from '@material-ui/core/Button'
-import Typography from '@material-ui/core/Typography'
-import CurrencyTextField from '@unicef/material-ui-currency-textfield'
+//import Typography from '@material-ui/core/Typography'
+//import CurrencyTextField from '@unicef/material-ui-currency-textfield'
 import blue from '@material-ui/core/colors/blue'
 import pink from '@material-ui/core/colors/pink'
 import green from  '@material-ui/core/colors/green'
-import teal from  '@material-ui/core/colors/teal'
 import amber from  '@material-ui/core/colors/amber'
 import SentimentSatisfiedAltIcon from '@material-ui/icons/SentimentSatisfiedAlt'
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline'
-import VisibilityIcon from '@material-ui/icons/Visibility'
 import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline'
 
 //import Icon from '@material-ui/core/Icon'
@@ -100,27 +98,6 @@ const useStyles = makeStyles({
     },
   }
 });
-
-const bidField =
-        <CurrencyTextField
-            //label="Bid"
-            variant="outlined"
-            value={0.00}
-            currencySymbol="£"
-            //minimumValue="0"
-            outputFormat="number"
-            decimalCharacter="."
-            //inputStyle={{ fontSize: '1.2em' }}
-            digitGroupSeparator=","
-            InputProps={{
-                classes: {
-                    input: {fontSize: 25},
-                },
-            }}
-            style={{ borderRadius: 4, padding: 7, backgroundColor: "#ffffff"}}
-            //onChange={(e) => {this.onChange(e, key)}}
-        />
-
 
 export default function SellerButtons(props) {
   const classes = useStyles();

@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
+import React, { useState } from 'react';
+import { makeStyles } from '@material-ui/core/styles'
+import Card from '@material-ui/core/Card'
+import CardContent from '@material-ui/core/CardContent'
+import Button from '@material-ui/core/Button'
+import Typography from '@material-ui/core/Typography'
 import CurrencyTextField from '@unicef/material-ui-currency-textfield'
 import blue from '@material-ui/core/colors/blue'
 import pink from '@material-ui/core/colors/pink'
 import SentimentSatisfiedAltIcon from '@material-ui/icons/SentimentSatisfiedAlt'
 import VisibilityIcon from '@material-ui/icons/Visibility'
 import CustomizedSnackbars from '../information/CustomSnackbars'
+import Cookies from 'js-cookie'
 
 const useStyles = makeStyles({
   card: {
@@ -64,14 +65,12 @@ const useStyles = makeStyles({
 const peckish = {
     "variant": "warning",
     "duration": 1900,
-    "message": "You bid less than the minimum"
+    "message": "Ooopsy!"
 }
 
 
 export default function AuctionCard(props) {
     const classes = useStyles();
-
-    console.log("WHY???")
 
     const [bidValue, setBidValue] = useState(0.00)
     const [showSnack, setShowSnack] = useState(false)
@@ -119,7 +118,11 @@ export default function AuctionCard(props) {
 
     function onSubmit(e) {
         // pass the bid value back up to parent
-        if (bidValue < minBid) {
+        if (!Cookies.get('username')) {
+            peckish.message = "You must be logged in to bid"
+            openSnack()
+        } else if (bidValue < minBid) {
+            peckish.message = "You bid less than the minimum"
             openSnack()
         } else {
             if (props.onSubmit) props.onSubmit(bidValue)

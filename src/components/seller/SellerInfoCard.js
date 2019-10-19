@@ -148,7 +148,7 @@ return (
         </Typography>
         <div className={classes.sellerContainer}>
             <div className={classes.avatarBox}>
-                <AvatarChooser avatarName="random" />
+                <AvatarChooser avatarName="random" avatarSize="large" />
             </div>
             <div className={classes.userDetails}>
                 <Typography variant="h5" className={classes.username}>

@@ -9,11 +9,11 @@ import nophoto from '../no-photo-icon-faded.png'
 import "react-image-gallery/styles/css/image-gallery.css"
 import ImageGallery from 'react-image-gallery'
 import DisplayMiniAuction from '../auction/DisplayMiniAuction'
-import SellerInfoCard from '../seller/SellerInfoCard'
-import AuctionOptions from '../auction/AuctionOptions'
+//import SellerInfoCard from '../seller/SellerInfoCard'
+//import AuctionOptions from '../auction/AuctionOptions'
 //import red from '@material-ui/core/colors/red'
 import DisplayFields from './DisplayFields'
-import BidPlayerLarge from '../auction/BidPlayerLarge'
+//import BidPlayerLarge from '../auction/BidPlayerLarge'
 
 const dStyles = theme => ({
   displayLinebreak: {
@@ -108,8 +108,8 @@ class DisplayItem extends Component {
                        peckish: peckish,
                        model: {} }
 
-        console.log("++++++++++++++++++++++++++++++++++++++++++++++")
-        console.log(this.state.item)
+        //console.log("++++++++++++++++++++++++++++++++++++++++++++++")
+        //console.log(this.state.item)
 
         // check for passed in item_id
         if (this.props.item) {
@@ -216,22 +216,8 @@ class DisplayItem extends Component {
                             <DisplayMiniAuction
                                 itemId = {this.state.item.item_id}
                                 itemOwner = {this.state.itemOwner}
+                                item = {this.state.item}
                             />
-                            {!this.state.itemOwner ?
-                                <div>
-                                <SellerInfoCard
-                                    publicId = {this.state.item.public_id}
-                                />
-                                <AuctionOptions
-                                    publicId = {this.state.item.public_id}
-                                    itemId = {this.state.item.item_id}
-                                />
-                                </div>
-                            :
-                                <BidPlayerLarge
-                                    item = {this.state.item}
-                                />
-                            }
                         </div>
                         <div 
                             className={classes.carouselBox}

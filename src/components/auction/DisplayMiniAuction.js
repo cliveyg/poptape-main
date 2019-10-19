@@ -18,6 +18,10 @@ import VisibilityIcon from '@material-ui/icons/Visibility'
 import Icon from '@material-ui/core/Icon'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
+import SellerInfoCard from '../seller/SellerInfoCard'
+import AuctionOptions from '../auction/AuctionOptions'
+import BidPlayerLarge from '../auction/BidPlayerLarge'
+
 const styles = theme => ({
   dropzone: {
    fontSize: 12,
@@ -78,6 +82,9 @@ const styles = theme => ({
     overflow: "hidden",
     position: "relative",
     width: "100%",
+  },
+  purp: {
+    color: "#9c27b0",
   },
   orange: {
     color: "#ff8f00"
@@ -154,15 +161,20 @@ class DisplayMiniAuction extends Component {
                        auctionType: 'English auction',
                        itemId: this.props.itemId,
                        timerComponent: 'Time passes',
+                       bidPlayerComponent: 'Weeee',
                        itemOwner: this.props.itemOwner,
+                       item: this.props.item,
                        date: new Date().getTime(),
                        peckish: peckish,
+                       currentBestBid: null,
                        currentLot: {},
                        auction: {} }
 
         // check for passed in item_id
         if (this.props.itemId) {
 
+            // this seems a very fiddly way to get the currentLot stuff 
+            // just to load some components. sure there's a better way
             const setCurrentLot = (lot) => {
                 this.setState({ currentLot: lot },
                               () => { 
@@ -172,12 +184,18 @@ class DisplayMiniAuction extends Component {
                                                   this.state.currentLot.end_time
                                               ) 
                                       })
+                                      this.setState({
+                                          bidPlayerComponent:
+                                              this.getBidPlayerComp(
+                                                  this.state.currentLot
+                                              )
+                                      })
                                     }
                              )
             }
 
             const request = require('superagent')
-            const auctionhouseURL = '/auctionhouse/auction/item/'+this.state.itemId
+            const auctionhouseURL = '/auctionhouse/auction/item/'+this.state.itemId+"/"
             request.get(auctionhouseURL)
                    .set('Accept', 'application/json')
                    .set('Content-Type', 'application/json')
@@ -190,6 +208,7 @@ class DisplayMiniAuction extends Component {
                                             const itemId = this.state.itemId
                                             lots.forEach(function(lot) {
                                                 if (lot.item_id === itemId) {
+                                                    //console.log(lot)
                                                     setCurrentLot(lot)
                                                 }
                                             });
@@ -225,6 +244,7 @@ class DisplayMiniAuction extends Component {
         this.handleButton = this.handleButton.bind(this)
         this.numberWithCommas = this.numberWithCommas.bind(this)
         this.onSubmit = this.onSubmit.bind(this)
+        this.getCurrentBest = this.getCurrentBest.bind(this)
     }
 
     numberWithCommas = (n) => {
@@ -234,6 +254,12 @@ class DisplayMiniAuction extends Component {
     onSubmit = (bid) => {
         console.log("YEEEEA")
         console.log(bid)
+    }
+
+    getCurrentBest = (currentBest) => {
+        console.log("[DisplayMiniAuction] CURRENT BEST") 
+        console.log(currentBest)
+        this.setState({ currentBestBid: currentBest })
     }
 
     handleChange = (e, key) => {
@@ -265,16 +291,23 @@ class DisplayMiniAuction extends Component {
         }
     }
 
-    //componentDidMount() {
-    //}
-
     getTimerComp = (endTime) => {
         return ( 
-                <Timer
-                    endTime = {endTime}
-                />
+            <Timer
+                endTime = {endTime}
+            />
         )
     } 
+
+    getBidPlayerComp = (currentLot) => {
+        return (
+            <BidPlayerLarge
+                item = {this.state.item}
+                currentLot = {currentLot}
+                getCurrentBest = {(currentBest) => {this.getCurrentBest(currentBest)}}
+            />
+        )
+    }
 
     render() {
         const key_date = this.state.date
@@ -283,14 +316,21 @@ class DisplayMiniAuction extends Component {
         let reserveMessage = null
 
         // set some display prices here
-        if (this.state.currentLot.current_price) {
-            displayPrice = this.state.currentLot.current_price
+        //if (this.state.currentLot.current_price) {
+        if (this.state.currentBestBid) {
+            displayPrice = this.state.currentBestBid.bid_amount
             displayPrice = this.numberWithCommas(displayPrice)
         } else if (this.state.currentLot.start_price) {
             displayPrice = this.state.currentLot.start_price
             displayPrice = this.numberWithCommas(displayPrice)
         }
 
+        if (this.state.currentLot.reserve_price &&
+            this.state.currentBestBid) {
+            reserveMessage = this.state.currentBestBid.reserve_message
+        }
+
+/*
         if (this.state.currentLot.reserve_price &&
             this.state.currentLot.current_price && 
             this.state.currentLot.reserve_price > this.state.currentLot.current_price ) {
@@ -302,7 +342,7 @@ class DisplayMiniAuction extends Component {
                    this.state.currentLot.current_price >= this.state.currentLot.reserve_price ) {
             reserveMessage = 'Reserve met'
         }
-
+*/
         return (
             <div>
             {this.state.showError ?
@@ -319,6 +359,7 @@ class DisplayMiniAuction extends Component {
                     </Card>
                 </div>
             :
+                <div>
                 <div className={classes.main}>
                     <div className={classes.leftCol}>
                         <Card className={classes.card}>
@@ -371,6 +412,15 @@ class DisplayMiniAuction extends Component {
                                 : 
                                 null                                    
                                 }
+                                {reserveMessage === "Reee" ?
+                                    <>
+                                    <Typography variant="subtitle1">
+                                        <span className={classes.purp}>{reserveMessage}</span><br />
+                                    </Typography>
+                                    </>
+                                :
+                                null   
+                                }
                                 <div color='primary' className={classes.watching}>
                                         <Icon><VisibilityIcon /></Icon><span className={classes.watchingBlurb}> 12 people watching<br /></span>
                                 </div>
@@ -388,6 +438,22 @@ class DisplayMiniAuction extends Component {
                         }
                     </div>
                 </div>
+                        {!this.state.itemOwner ?
+                            <div>
+                            <SellerInfoCard
+                                publicId = {this.state.item.public_id}
+                            />
+                            <AuctionOptions
+                                publicId = {this.state.item.public_id}
+                                itemId = {this.state.item.item_id}
+                            />
+                            </div>
+                        :
+                            <>
+                            {this.state.bidPlayerComponent}
+                            </>
+                        }
+</div>
             }
 
             {this.state.showSnack ?

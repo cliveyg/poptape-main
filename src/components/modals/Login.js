@@ -38,6 +38,7 @@ class LoginDialog extends Component {
             Cookies.remove('username')
             Cookies.remove('public_id')
             this.closeModal()
+            window.location.reload()
         }
     }
 
@@ -110,6 +111,7 @@ class LoginDialog extends Component {
                     Cookies.set('username', data.username)
                     Cookies.set('public_id', this.getPublicId(res.body.token))
                     closeModal()
+                    window.location.reload()
                 })
                .catch(err => {
                     if (err.status === 400 || err.status === 401) {

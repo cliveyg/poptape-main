@@ -305,6 +305,15 @@ class AddToAuction extends Component {
                         color = "primary"
                         variant="contained"
                         //onClick={(e) => {this.handleSuccess(e, 'show')}}
+                        onClick={() => this.props.history.push('/item/'+this.state.itemId+'/'+this.state.itemName)}
+                    >
+                        Show This Item
+                    </Button>
+                    <Button
+                        className = {classes.dropbuttons}
+                        color = "primary"
+                        variant="contained"
+                        //onClick={(e) => {this.handleSuccess(e, 'show')}}
                         onClick={() => this.props.history.push(this.state.itemsURL)}
                     >   
                         Show My Items

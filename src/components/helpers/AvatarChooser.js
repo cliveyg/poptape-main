@@ -79,16 +79,26 @@ const useStyles = makeStyles({
     width: 60,
     height: 60,
   },
+  smallAvatar: {
+    margin: 2,
+    marginRight: 5,
+    width: 20,
+    height: 20,
+  },
 });
 
 export default function AvatarChooser(props) {
     const classes = useStyles();
     let avatarName = 'random'
+    let avatarSize = 'large'
     let avatarObj = null
     let avatar = false
 
     if (typeof props.avatarName !== 'undefined') {
         avatarName = props.avatarName
+    }
+    if (typeof props.avatarSize !== 'undefined') {
+        avatarSize = props.avatarSize
     }
 
     avatar = avatarList.find(o => o[avatarName])
@@ -98,8 +108,14 @@ export default function AvatarChooser(props) {
     const keys = Object.keys(avatar)
     avatarObj = avatar[keys[0]]
 
-    return (
-        <Avatar alt={avatarName} src={avatarObj} className={classes.bigAvatar} />
-    );
+    if (avatarSize === 'small') {
+        return (
+            <Avatar alt={avatarName} src={avatarObj} className={classes.smallAvatar} />
+        )
+    } else {
+        return (
+            <Avatar alt={avatarName} src={avatarObj} className={classes.bigAvatar} />
+        )
+    }
 }
 

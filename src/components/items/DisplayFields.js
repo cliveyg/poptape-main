@@ -36,7 +36,7 @@ export default function DisplayFields(props) {
     //const [username, setUsername] = useState(null)
     //const [loaded, setLoaded]     = useState(false)
 
-    console.log(props.item)
+    //console.log(props.item)
 //    console.log(props.auctionData)
 /*
     // this url doesn't exist so we will mock for now
