@@ -14,8 +14,13 @@ import Cookies from 'js-cookie'
 
 const useStyles = makeStyles({
   card: {
+    marginLeft: 5,
+    marginRight: 10,
+    marginTop: 10,
+    marginBottom: 5,
     minWidth: 275,
-    minHeight: 250,
+    //minHeight: 220,
+    height: 240,
   },
   title: {
     fontSize: "1.1em",
@@ -46,6 +51,7 @@ const useStyles = makeStyles({
     paddingTop: 15,
     paddingBottom: 15,
     fontSize: "1.2em",
+    textAlign: "center",
   },
   currText: {
     backgroundColor: "#ffffff",
@@ -125,7 +131,8 @@ export default function AuctionCard(props) {
             peckish.message = "You bid less than the minimum"
             openSnack()
         } else {
-            if (props.onSubmit) props.onSubmit(bidValue)
+            //if (props.onSubmit) props.onSubmit(bidValue)
+            if (props.gotBid) props.gotBid(bidValue)
             setBidValue(0.00)
         }
     }

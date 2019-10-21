@@ -4,7 +4,7 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import '../Poptape.css'
 import 'typeface-varela-round'
 import MainNavBar from '../components/navigation/MainNavBar'
-import DisplayItem from '../components/items/DisplayItem'
+import ItemPageController from '../components/items/ItemPageController'
 import Paper from '@material-ui/core/Paper'
 
 const theme = createMuiTheme({
@@ -89,7 +89,7 @@ export default function ItemPage(props) {
             <div>
             <Paper style={{ margin: 20 }}>
                 {gotItem ?
-                    <DisplayItem
+                    <ItemPageController
                         item = {item}
                     />
                 : null
