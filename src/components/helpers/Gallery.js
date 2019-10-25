@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import blue from '@material-ui/core/colors/blue'
-import Typography from '@material-ui/core/Typography'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
-import { CarouselProvider, Slider, Slide, ButtonBack, ButtonNext } from 'pure-react-carousel'
-import 'pure-react-carousel/dist/react-carousel.es.css'
 import Box from '@material-ui/core/Box'
+import ImageGallery from 'react-image-gallery'
+import "react-image-gallery/styles/css/image-gallery.css"
+import nophoto from '../images/no-photo-icon-faded.png'
 
 const useStyles = makeStyles({
   card: {
@@ -28,29 +28,34 @@ const useStyles = makeStyles({
 
 export default function Gallery(props) {
     const classes = useStyles();
+
+    const [images, setImages] = useState([])
+
+    let meImages = []
+    if (props.item.fotos.length > 0) {
+        meImages = props.item.fotos.map((foto) => {
+            return { original: foto.metadata.s3_url,
+                     thumbnail: foto.metadata.s3_url }
+        })
+    } else {
+        meImages = [{ original: nophoto, thumbnail: nophoto }]
+    }
+
+    if (images.length === 0) {
+        setImages(meImages)
+    }
   
     
 return (
     <Card className={classes.card}>
       <CardContent style={{ marginBottom: 0, paddingBottom: 5}}>
-        <Typography className={classes.title} color="textSecondary" gutterBottom>
-          Gallery component
-        </Typography>
         <Box>
-            <CarouselProvider
-                naturalSlideWidth={100}
-                naturalSlideHeight={50}
-                infinite={true}
-                totalSlides={3}
-            >
-                <Slider>
-                    <Slide index={0}>I am the first Slide.</Slide>
-                    <Slide index={1}>I am the second Slide.</Slide>
-                    <Slide index={2}>I am the third Slide.</Slide>
-                </Slider>
-                <ButtonBack>Back</ButtonBack>
-                <ButtonNext>Next</ButtonNext>
-            </CarouselProvider>
+            <ImageGallery
+                autoPlay={false}
+                items={images}
+                slideInterval={5000}
+                additionalClass={classes.imageGallery}
+            />
         </Box>
       </CardContent>
     </Card>

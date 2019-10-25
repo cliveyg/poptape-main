@@ -6,6 +6,7 @@ import Box from '@material-ui/core/Box'
 import OwnerView from './OwnerView'
 import BidderView from './BidderView'
 import Gallery from '../helpers/Gallery'
+import DisplayFields from './DisplayFields'
 
 const Styles = theme => ({
     itemName: {
@@ -91,7 +92,8 @@ class ItemPageController extends Component {
     componentDidMount() {
     
         if (this.state.item) {
-            //console.log("[[ ItemPageController -> componentDidMount [1] ]]")
+            console.log("[[ ItemPageController -> componentDidMount [1] ]]")
+            console.log(this.state.item)
             if (this.state.item.public_id === Cookies.get('public_id')) {
                 this.setState({ ownerView: true })
             }
@@ -129,9 +131,16 @@ class ItemPageController extends Component {
                             </>
                         }
                     </Box>
-                    <Box flex={4} className={classes.itemDescriptionColumn}>
-                        <Gallery />
+                    <Box flex={5} className={classes.itemDescriptionColumn}>
+                        <Gallery 
+                            item = {this.state.item}
+                        />
                     </Box>
+                </Box>
+                <Box>
+                    <DisplayFields
+                        item = {this.state.item}
+                    />
                 </Box>
                 </>
             }

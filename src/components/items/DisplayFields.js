@@ -6,15 +6,19 @@ import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 import CircularProgress from '@material-ui/core/CircularProgress'
 //import blue from '@material-ui/core/colors/blue'
+import Box from '@material-ui/core/Box'
 
 const useStyles = makeStyles({
   card: {
-    margin: 6,
+    margin: 5,
     //minWidth: 275,
     //maxHeight: 170,
+    //backgroundColor: "yellow",
+    padding: 0,
   },
   title: {
-    fontSize: "1.4em",
+    fontSize: "1.2em",
+    marginBottom: 10,
   },
   progress: {
     verticalAlign: "middle",
@@ -24,8 +28,11 @@ const useStyles = makeStyles({
     fontSize: "0.8em",
     whiteSpace: "pre-line"
   },
-  mainTitle: {
-    fontSize: "0.8em",
+  paddingBeLess: {
+    paddingTop: 0,
+    paddingLeft: 2,
+    paddingRight: 2,
+    paddingBottom: 5,
   }
 });
 
@@ -62,33 +69,27 @@ return (
     <Card className={classes.card}>
       {showCard ?
       <>
-      <CardContent style={{ marginBottom: 0, paddingBottom: 5}}>
-        <Typography variant="h4" style={{ marginBottom: 10}}>
-          <span className={classes.mainTitle}>Item details</span>
-        </Typography>
-        <div>
-            <Paper className={classes.displayLinebreak}>
-                <Typography color="textSecondary" className={classes.title} >
-                    Description:
-                </Typography>
-                <br />{props.item.description}
-            </Paper>
-            <Typography variant="body1">
+        <CardContent className={classes.paddingBeLess}>
+            <Box>
+                <Paper className={classes.displayLinebreak}>
+                    <Typography color="textSecondary" className={classes.title} >
+                        Description
+                    </Typography>
+                    {props.item.description}
+                </Paper>
+                <Typography variant="body1">
 
-            </Typography>
-        </div>
-      </CardContent>
+                </Typography>
+            </Box>
+        </CardContent>
       </>
       :
       <>
-      <CardContent>
-        <Typography variant="h4" style={{ marginBottom: 10}}>
-          <span className={classes.mainTitle}>Item details</span>
-        </Typography>
-        <div className={classes.progress}>
-            <br /><CircularProgress />
-        </div> 
-      </CardContent>
+        <CardContent>
+            <div className={classes.progress}>
+                <CircularProgress />
+            </div> 
+        </CardContent>
       </> 
       }     
     </Card>

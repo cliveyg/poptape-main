@@ -1,13 +1,15 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+//import { Link } from 'react-router-dom'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 
-import '../Poptape.css'
 import 'typeface-varela-round'
 import MainNavBar from '../components/navigation/MainNavBar'
-import Paper from '@material-ui/core/Paper'
-import Typography from '@material-ui/core/Typography'
+//import Paper from '@material-ui/core/Paper'
+//import Typography from '@material-ui/core/Typography'
 import Cookies from 'js-cookie'
+import Box from '@material-ui/core/Box'
+import ProfileViewer from '../components/profile/ProfileViewer'
+import ProfileOwner from '../components/profile/ProfileOwner'
 
 const theme = createMuiTheme({
   typography: {
@@ -31,9 +33,19 @@ const theme = createMuiTheme({
   }
 })
 
-export default function UserProfilePage() {
+export default function UserProfilePage(props) {
 
-    const [username, setUsername] = React.useState(Cookies.get('username'));
+    const [username, setUsername] = React.useState(Cookies.get('username'))
+    const [owner, setOwner] = React.useState(null)
+
+    const urlPath = props.location.pathname
+    const urlArray = urlPath.split("/")    
+    const urlUsername = urlArray[2]
+    if (urlUsername === username) {
+        if (!owner) {
+            setOwner(true)
+        }
+    }    
 
     return (
         <div style={{ width:"100%"}}>
@@ -41,24 +53,15 @@ export default function UserProfilePage() {
             <header>
                 <MainNavBar />
             </header>
-            <div>
-            <Paper style={{ margin: 20 }}>
-                <Typography variant="h3">
-                    User profile
-                </Typography>
-                <Typography variant="body1">
-                    <Link to='/' style={{ padding: 10 }}>
-                        Home<br /> 
-                    </Link>
-                    <Link to={'/user/'+username+'/items'} style={{ padding: 10 }}>
-                        My Items<br />
-                    </Link>
-                    <Link to='/item/create' style={{ padding: 10 }}>
-                        Create Item<br />
-                    </Link>
-                </Typography>
-            </Paper>
-            </div>
+            <Box>
+            {owner ?
+                <ProfileOwner />
+            :
+                <ProfileViewer
+                    username  = {urlUsername}
+                />
+            }            
+            </Box>
             </MuiThemeProvider>
         </div>
     )

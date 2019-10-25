@@ -11,6 +11,7 @@ import SentimentSatisfiedAltIcon from '@material-ui/icons/SentimentSatisfiedAlt'
 import VisibilityIcon from '@material-ui/icons/Visibility'
 import CustomizedSnackbars from '../information/CustomSnackbars'
 import Cookies from 'js-cookie'
+import Box from '@material-ui/core/Box'
 
 const useStyles = makeStyles({
   card: {
@@ -20,7 +21,7 @@ const useStyles = makeStyles({
     marginBottom: 5,
     minWidth: 275,
     //minHeight: 220,
-    height: 240,
+    height: 220,
   },
   title: {
     fontSize: "1.1em",
@@ -128,7 +129,7 @@ export default function AuctionCard(props) {
             peckish.message = "You must be logged in to bid"
             openSnack()
         } else if (bidValue < minBid) {
-            peckish.message = "You bid less than the minimum"
+            peckish.message = "You can't bid less than the minimum"
             openSnack()
         } else {
             //if (props.onSubmit) props.onSubmit(bidValue)
@@ -156,10 +157,13 @@ export default function AuctionCard(props) {
                 Bid Now
               </Button>
             </div>
-            <Typography variant="body2" component="p">
-              Minimum bid is £{formattedMinBid}
-            </Typography>
-            <div>
+            <Box style={{marginTop: 5}} display="flex" flexDirection="row">
+                <Box flex={2} style={{ paddingTop: 5}}>
+                <Typography variant="body2" component="p">
+                  Minimum bid is £{formattedMinBid}
+                </Typography>
+                </Box>
+                <Box flex={1} align="right">
                 <Button
                     variant="outlined"
                     size="small"
@@ -168,7 +172,8 @@ export default function AuctionCard(props) {
                 >
                     Watch
                 </Button>
-            </div>
+                </Box>
+            </Box>
           </CardContent>
         </Card>
         {showSnack ?

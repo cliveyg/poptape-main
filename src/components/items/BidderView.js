@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import { withStyles } from '@material-ui/core/styles'
 import Cookies from 'js-cookie'
-import Typography from '@material-ui/core/Typography'
 import Box from '@material-ui/core/Box'
 import BidViewer from '../auction/BidViewer'
 import AuctionCard from '../auction/AuctionCard'
@@ -15,7 +14,11 @@ const Styles = theme => ({
         //backgroundColor: "red",
         //backgroundColor: "#e0e2e4",
         //backgroundColor: "#e7e6e6",
-    }
+    },
+    paddingBeLess: {
+        padding: 2,
+    //backgroundColor: "red",
+    },
 });
 
 class BidderView extends Component {
@@ -66,7 +69,7 @@ class BidderView extends Component {
     }
 
     createWebsocket(bid) {
-        //console.log("[[ ItemViewer ]] -> createWebsocket")
+        //console.log("[[ BidderView ]] -> createWebsocket")
         const wsHost = "wss://poptape.club/auction/bid/"+
                        this.state.auction.auction_id+
                        "/"+this.state.currentLot.lot_id

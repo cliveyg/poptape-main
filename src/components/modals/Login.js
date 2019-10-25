@@ -37,6 +37,9 @@ class LoginDialog extends Component {
             Cookies.remove('access-token')
             Cookies.remove('username')
             Cookies.remove('public_id')
+            if (Cookies.get('account-access-token')) {
+                Cookies.remove('account-access-token')
+            }
             this.closeModal()
             window.location.reload()
         }

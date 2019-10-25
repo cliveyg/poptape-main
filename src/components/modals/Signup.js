@@ -3,6 +3,8 @@ import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 import Cookies from 'js-cookie'
 import CustomizedSnackbars from '../information/CustomSnackbars'
+import { withRouter } from 'react-router-dom'
+import CircularProgress from '@material-ui/core/CircularProgress'
 
 class SignupDialog extends Component {
 
@@ -15,6 +17,9 @@ class SignupDialog extends Component {
         Cookies.remove('access-token')
         Cookies.remove('username')
         Cookies.remove('public')
+        if (Cookies.get('account-access-token')) {
+            Cookies.remove('account-access-token')
+        }
 
         this.state = {username: "",
                       password: "",
@@ -22,6 +27,7 @@ class SignupDialog extends Component {
                       email: "",
                       toggleModal: false,
                       showSnack: false,
+                      showLoader: false,
                       duration: 1900,
                       loggedIn: false,
                       date: new Date().getTime(),
@@ -29,11 +35,12 @@ class SignupDialog extends Component {
 
         this.handleChange = this.handleChange.bind(this)
         this.handleSubmit = this.handleSubmit.bind(this)
-        this.toggleSnack  = this.toggleSnack.bind(this)
-        this.toggleModal  = this.toggleModal.bind(this)
-        this.closeModal   = this.closeModal.bind(this)
-        this.openSnack  = this.openSnack.bind(this)
-        this.getPublicId  = this.getPublicId.bind(this)
+        this.toggleSnack = this.toggleSnack.bind(this)
+        this.toggleModal = this.toggleModal.bind(this)
+        this.closeModal = this.closeModal.bind(this)
+        this.openSnack = this.openSnack.bind(this)
+        this.getPublicId = this.getPublicId.bind(this)
+        this.redirectToProfile = this.redirectToProfile.bind(this)
     
     }
 
@@ -82,6 +89,11 @@ class SignupDialog extends Component {
         });
     }
 
+    redirectToProfile() {
+        this.props.history.push('/user/'+Cookies.get('username'))
+    }
+
+
     handleSubmit(event) {
         event.preventDefault();
         var data = {
@@ -92,6 +104,11 @@ class SignupDialog extends Component {
         }
         const openSnack = this.openSnack.bind(this)
         const closeModal = this.closeModal.bind(this)
+        const reDirect = this.redirectToProfile.bind(this)
+
+        this.setState({ showLoader: true })
+
+        console.log("[[ SignupDialog ]] -> onSubmit() ")
 
         const request = require('superagent')
         request.post('/authy/user')
@@ -99,21 +116,28 @@ class SignupDialog extends Component {
                .set('Accept', 'application/json')
                .set('Content-Type', 'application/json')
                .then(res => {
+                    this.setState({ showLoader: false })
                     Cookies.set('access-token', res.body.token)
                     Cookies.set('username', data.username)
                     Cookies.set('public_id', this.getPublicId(res.body.token))
+                    console.log("[[ SignupDialog ]] -> onSubmit() - success!")
                     const peckish = {
                         variant: "success",
                         message: "User [ "+data.username+" ] successfully created"
                     }
-                    this.setState({ peckish: peckish })
-                    openSnack()
-                    // set a timer so snackbar appears and disappears
-                    setTimeout(function(){
-                        closeModal()
-                    }, 2000);
+                    this.setState({ peckish: peckish },
+                                 () => {
+                                     openSnack()
+                                     // set a timer so snackbar appears and disappears
+                                     setTimeout(function(){
+                                         closeModal()
+                                         reDirect()
+                                     }, 2000);
+                                 })
                 })
                .catch(err => {
+                    console.log("[[ SignupDialog ]] -> onSubmit() - fail :(")
+                    console.log(err)
                     if (err.status === 401 || err.status === 400) {
                         const peckish = {
                             variant: "error",
@@ -189,6 +213,12 @@ class SignupDialog extends Component {
                 </Button>
                 </form>
             </div>
+            {this.state.showLoader ?
+                <div className="poptape-loader">
+                    <CircularProgress />
+                </div>
+            : null
+            }
             {this.state.showSnack ?
                 <CustomizedSnackbars
                     duration={this.state.duration}
@@ -207,4 +237,4 @@ class SignupDialog extends Component {
   }
 }
 
-export default SignupDialog
+export default withRouter(SignupDialog)

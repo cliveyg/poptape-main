@@ -8,6 +8,9 @@ import InfoIcon from '@material-ui/icons/Info'
 import IconButton from '@material-ui/core/IconButton'
 import VisibilityIcon from '@material-ui/icons/Visibility'
 import Icon from '@material-ui/core/Icon'
+import Tooltip from '@material-ui/core/Tooltip'
+import { Link } from 'react-router-dom'
+import blue from '@material-ui/core/colors/blue'
 
 const styles = theme => ({
   progress: {
@@ -32,11 +35,15 @@ const styles = theme => ({
     marginTop: 10,
     marginLeft: 10,
     minWidth: 200,
-    minHeight: 240,
+    //minHeight: 220,
+    height: 220,
   },
   infoIcon: {
     color: "#9cd0ee",
     fontSize: "0.8em",
+  },
+  iconLink: {
+    color: "#9cd0ee",
   },
   displayPrice: {
     marginTop: "9px"
@@ -53,7 +60,19 @@ const styles = theme => ({
   },
   watchingBlurb: {
     marginLeft: 5,
-  }
+  },
+  linky: {
+    color: blue[700],
+    "&:visited": {
+      color: blue[700],
+    },
+    textDecoration: "none",
+  },
+  tooltip: {
+    fontSize: "0.7em",
+    backgroundColor: "#9cd0ee",
+    color: "black",
+  },
 });
 
 
@@ -72,6 +91,7 @@ class InformationBox extends Component {
             currentLot: this.props.currentLot || null,
             currentBestBid: props.currentBestBid || null,
             auctionType: null,
+            auctionTypeText: null,
             peopleWatching: this.props.peopleWatching || 0,
         }
         
@@ -79,6 +99,7 @@ class InformationBox extends Component {
     }
 
     componentDidMount() {
+        const { classes } = this.props
         if (!this.state.auction) console.log("NO AUCTION!")
         if (!this.state.currentLot) console.log("NO CURRENT LOT!")
         if (!this.state.item) console.log("NO ITEM!")
@@ -87,17 +108,22 @@ class InformationBox extends Component {
             timerComponent: this.getTimerComp(this.state.currentLot.end_time)
         })
         let aType = null
+        let aText = null
         switch (this.state.auction.type) {
             case "EN": aType = "English auction"
+                       aText = "An English auction is an open, transparent ascending dynamic auction. Click on the icon to go to our help page for more information." 
                        break
             case "DU": aType = "Dutch auction"
+                       aText = "Pass the duchy"
                        break
             case "BN": aType = "Buy now"
+                       aText = "Buy, buy, buy, buy!"
                        break
             default:   aType = null
                       
         }
         this.setState({ auctionType: aType })
+        this.setState({ auctionTypeText: aText })
     }
 
     numberWithCommas = (n) => {
@@ -113,7 +139,6 @@ class InformationBox extends Component {
     } 
 
     render() {
-        const key_date = this.state.date
         const { classes } = this.props
         let displayPrice = null
         let reserveMessage = null
@@ -139,7 +164,7 @@ class InformationBox extends Component {
                         <Typography variant="h5">
                             <span className={classes.auctionType}>{this.state.auctionType}</span>
                             <IconButton aria-label={`Info about auction type`} className={classes.infoIcon}>
-                                <InfoIcon />
+                                <InfoIcon />>
                             </IconButton>
                             <br />
                         </Typography>
@@ -159,7 +184,7 @@ class InformationBox extends Component {
                         }
                         {!reserveMessage ?
                             <>
-                            <Typography variant="subtitle1">
+                            <Typography variant="h5">
                                 <span className={classes.red}>No reserve!</span><br />
                             </Typography>
                             </>
@@ -168,7 +193,7 @@ class InformationBox extends Component {
                         }
                         {reserveMessage === "Reserve met" ?
                             <>
-                            <Typography variant="subtitle1">
+                            <Typography variant="h5">
                                 <span className={classes.green}>{reserveMessage}</span><br />
                             </Typography>
                             </> 
@@ -177,7 +202,7 @@ class InformationBox extends Component {
                         }
                         {reserveMessage === "Reserve not met" ?
                             <>
-                            <Typography variant="subtitle1">
+                            <Typography variant="h5">
                                 <span className={classes.orange}>{reserveMessage}</span><br />
                             </Typography>
                             </>

@@ -40,6 +40,18 @@ body {
   z-index: 1350;
 }
 
+.poptape-loader {
+    vertical-align: middle;
+    text-align: center;
+    position: absolute;
+    left: 35%;
+    right: 35%;
+    top: 47%;
+    bottom: 45%;
+    display: inline-block;
+    z-index: 1355    
+}
+
 .poptape-login-modal-inner {  
   height: 250px;
 }

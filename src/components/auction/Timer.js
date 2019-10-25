@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import Typography from '@material-ui/core/Typography'
 
 class Timer extends Component {
+    _isMounted = false
 
     constructor(props){  
         super(props);  
@@ -34,21 +35,27 @@ class Timer extends Component {
     }
 
     componentDidMount() {
+        this._isMounted = true
         this.setOriginalTime()
         this.displayTimer()
         let timeLeftVar = this.secondsToTime(this.state.seconds)
         this.setState({ time: timeLeftVar })
     }
 
+    componentWillUnmount() {
+        this._isMounted = false
+    }
 
     setOriginalTime = () => {
         // get end time and find seconds to go
         let t1 = new Date(this.props.endTime)
         let now = new Date().getTime()
         let diff = t1.getTime() - now
-         
-        this.setState({ seconds: diff/1000 },
-                      () => { this.startTimer()})
+        
+        if (this._isMounted) {     
+            this.setState({ seconds: diff/1000 },
+                          () => { this.startTimer()})
+        }
     }
 
     startTimer = () => {
@@ -59,10 +66,12 @@ class Timer extends Component {
 
     countDown = () => {
         let seconds = this.state.seconds - 1;
-        this.setState({
-            time: this.secondsToTime(seconds),
-            seconds: seconds,
-        })
+        if (this._isMounted) {
+            this.setState({
+                time: this.secondsToTime(seconds),
+                seconds: seconds,
+            })
+        }
     
         // Check if we're at zero.
         if (seconds === 0) { 

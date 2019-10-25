@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { withStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
+//import Box from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import blue from '@material-ui/core/colors/blue'
@@ -24,7 +25,7 @@ const Styles = theme => ({
     //paddingBottom: 5,
   },
   title: {
-    fontSize: "1.2em",
+    fontSize: "1.0em",
   },
   linky: {
     color: blue[700],
@@ -32,6 +33,11 @@ const Styles = theme => ({
       color: blue[700],
     },
     textDecoration: "none",
+  },
+  paddingBeLess: {
+    paddingLeft: 2,
+    paddingRight: 2,
+    paddingTop: 5,
   },
   progress: {
     verticalAlign: "middle",
@@ -44,10 +50,6 @@ const Styles = theme => ({
   usernameContainer: {
     display: "flex",
     flexFlow: "row",
-  },
-  bidderContainer: {
-    //display: "flex",
-    //flexFlow: "row",
   },
   avatar: {
     order: 1,
@@ -88,6 +90,10 @@ const Styles = theme => ({
     height: '165px' 
     //height: "100%",
   },
+  largeTableContainer: {
+    overflow: 'auto',
+    height: '300px'
+  },
 });
 
 
@@ -100,6 +106,7 @@ class BidViewer extends Component {
             showCard: false,
             lines: [],
             dataLoaded: false,
+            viewerSize: props.viewerSize || 'small',
             currentBestBid: props.currentBestBid || null,
             allBids: props.allBids || null
         }
@@ -170,7 +177,7 @@ class BidViewer extends Component {
             <Card className={classes.card}>
               {this.state.showCard ?
               <>
-              <CardContent style={{ marginBottom: 0, paddingBottom: 5}}>
+              <CardContent className={classes.paddingBeLess}>
                 {this.state.currentBestBid ?
                     <Typography className={classes.title} color="textSecondary" gutterBottom>
                         Bidding information<br />
@@ -182,7 +189,23 @@ class BidViewer extends Component {
                         <span className={classes.cwNoOne}>No-one is currently winning this lot</span>
                     </Typography>
                 }
-                <div className={classes.bidderContainer}>
+                <div>
+                {this.state.viewerSize === 'large' ?
+                    <div className={classes.largeTableContainer}>
+                    <Table stickyHeader size="small" aria-label="bid table">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell className={classes.tableHead}>Bidder</TableCell>
+                          <TableCell className={classes.tableHead} align="left">Bid</TableCell>
+                          <TableCell className={classes.tableHead} align="left">Message</TableCell>
+                          <TableCell className={classes.tableHead} align="left">ID</TableCell>
+                          <TableCell className={classes.tableHead} align="left">Status</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>{this.buildRows()}</TableBody>
+                    </Table>
+                    </div>
+                :
                     <div className={classes.tableContainer}>
                     <Table stickyHeader size="small" aria-label="bid table">
                       <TableHead>
@@ -197,6 +220,7 @@ class BidViewer extends Component {
                       <TableBody>{this.buildRows()}</TableBody>
                     </Table>
                     </div>
+                }
                 </div>
               </CardContent>
               </>

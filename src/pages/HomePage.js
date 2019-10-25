@@ -57,7 +57,22 @@ export default function HomePage() {
                         Create item<br />
                     </Link>
                     <Link to={'/user/'+username} style={{ padding: 10 }}>
-                        Profile<br />
+                        Current users profile<br />
+                    </Link>
+                    <Link to={'/user/'+username+'/account'} style={{ padding: 10 }}>
+                        Current users account<br />
+                    </Link>
+                    <Link to={'/user/blinky'} style={{ padding: 10 }}>
+                        blinky profile<br />
+                    </Link>
+                    <Link to={'/user/môrk'} style={{ padding: 10 }}>
+                        môrk profile<br />
+                    </Link>
+                    <Link to={'/user/blinky/account'} style={{ padding: 10 }}>
+                        blinky account<br />
+                    </Link>
+                    <Link to={'/user/môrk/account'} style={{ padding: 10 }}>
+                        môrk account<br />
                     </Link>
                 </Typography>
             </div>

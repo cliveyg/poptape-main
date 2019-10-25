@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import { withStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
-import CardActions from '@material-ui/core/CardActions'
+//import CardActions from '@material-ui/core/CardActions'
 import CardContent from '@material-ui/core/CardContent'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
@@ -12,6 +12,7 @@ import FavoriteBorder from '@material-ui/icons/FavoriteBorder'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import blue from '@material-ui/core/colors/blue'
 import AvatarChooser from '../helpers/AvatarChooser'
+import Box from '@material-ui/core/Box'
 
 const Styles = theme => ({
   card: {
@@ -23,19 +24,19 @@ const Styles = theme => ({
     //minHeight: 200,
     //height: 243,
   },
-  title: {
-    fontSize: "1.2em",
-  },
-  OcardActs: {
+  paddingBeLess: {
+    paddingLeft: 2,
+    paddingRight: 2,
+    paddingBottom: 2,
     paddingTop: 0,
-    paddingLeft: 8,
-    paddingRight: 8,
+    //backgroundColor: "red",
+  },
+  title: {
+    fontSize: "1.0em",
   },
   linky: {
-    //color: blue[900],
     color: blue[700],
     "&:visited": {
-      //color: blue[900],
       color: blue[700],
     },
     textDecoration: "none",
@@ -49,32 +50,12 @@ const Styles = theme => ({
   },
   smallbutts: {
     textTransform: "none",
-    marginRight: 10
+    marginRight: 0,
+    //marginTop: 5,
   },
-  sellerContainer: {
-    display: "flex",
-    flexFlow: "row",
-  },
-  avatar: {
-    order: 1,
-    flex: 1,
-    maxWidth: 80,
-    verticalAlign: "middle",
-    height: "100%",
-  },
-  userDetails: {
-    order: 2,
-    flex: 1,
-    maxWidth: 150,
-    //backgroundColor: "green",
-    paddingBottom: 10,
-  },
-  cardActs: {
-    order: 3,
-    flex: 1,
-    minWidth: 200,
-    paddingTop: 40,
-    verticalAlign: "bottom",
+  payDetails: {
+    fontSize: "0.75em",
+    textAlign: "top",
   },
 });
 
@@ -148,68 +129,84 @@ class SellerInfoCard extends Component {
         return (
             <Card className={classes.card}>
               {this.state.showCard ?
-              <>
-              <CardContent style={{ marginBottom: 0, paddingBottom: 5}}>
-                <Typography className={classes.title} color="textSecondary" gutterBottom>
-                  Seller information
-                </Typography>
-                <div className={classes.sellerContainer}>
-                    <div className={classes.avatarBox}>
-                        <AvatarChooser avatarName="random" avatarSize="large" />
-                    </div>
-                    <div className={classes.userDetails}>
-                        <Typography variant="h5" className={classes.username}>
-                          {this.state.username}<br />
+                  <>
+                    <CardContent className={classes.paddingBeLess}>
+                        <Typography className={classes.title} color="textSecondary" gutterBottom>
+                            Seller information
                         </Typography>
-                        <Typography variant="subtitle1" style={{ marginBottom: 0, paddingBottom: 0}}>
-                            {this.state.reviews === "1" ?
-                                <><a href="#ss" className={classes.linky}>{this.state.reviews} review</a><br /></>
-                            :
-                                <><a href="#ss" className={classes.linky}>{this.state.reviews} reviews</a><br /></>
-                            }
-                            <a href="#de" className={classes.linky}>98% rating</a>
-                        </Typography>
-                    </div>
-<div className={classes.cardActs}>
-<CardActions style={{ marginTop: 0, paddingTop: 0}}>
-                <Button
-                    className={classes.smallbutts}
-                    size="small"
-                    color = "secondary"
-                    variant="outlined"
-                >
-                    Contact
-                </Button>
-                <Button
-                    className={classes.smallbutts}
-                    size="small"
-                    color = "secondary"
-                    variant="outlined"
-                >
-                    See other items
-                </Button>
-                <FormControlLabel
-                    style={{fontSize: "0.8em", marginTop: 5 }}
-                    control={<Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} value={this.props.publicId} />}
-                    label="Save this seller"
-                />
-
-</CardActions>
-</div>
-                </div>
-              </CardContent>
-              </>
+                        <Box display="flex" flexDirection="row">
+                            <Box flex={2} alignItems="flex-start">
+                                <AvatarChooser avatarName="random" avatarSize="large" />
+                            </Box>
+                            <Box flex={6} alignItems="flex-start">
+                                <Typography variant="h5" className={classes.username}>
+                                  {this.state.username}<br />
+                                </Typography>
+                                <Typography variant="subtitle1" style={{ marginBottom: 0, paddingBottom: 0}}>
+                                    {this.state.reviews === "1" ?
+                                        <><a href="#ss" className={classes.linky}>{this.state.reviews} review</a><br /></>
+                                    :
+                                        <><a href="#ss" className={classes.linky}>{this.state.reviews} reviews</a><br /></>
+                                    }
+                                    <a href="#de" className={classes.linky}>98% rating</a>
+                                </Typography>
+                            </Box>
+                            <Box flex={6} style={{backgroundColor: "white"}} alignItems="flex-start">
+                                <Box display="flex" flexDirection="column">
+                                    <Box flex={1}>
+                                        <Button
+                                            className={classes.smallbutts}
+                                            size="small"
+                                            color = "secondary"
+                                            variant="outlined"
+                                        >
+                                            Contact
+                                        </Button>
+                                    </Box>
+                                    <Box flex={1}>
+                                        <Button
+                                            className={classes.smallbutts}
+                                            size="small"
+                                            color = "secondary"
+                                            variant="outlined"
+                                            style={{marginTop: 10}}
+                                        >
+                                            See other items
+                                        </Button>
+                                    </Box>
+                                    <Box flex={1}>
+                                        <FormControlLabel
+                                            style={{fontSize: "0.8em" }}
+                                            control={<Checkbox icon={<FavoriteBorder />} 
+                                            checkedIcon={<Favorite />} 
+                                            value={this.props.publicId} />}
+                                            label="Save this seller"
+                                        />
+                                    </Box>
+                                </Box>
+                            </Box>
+                            <Box flex={7}>
+                                <Typography className={classes.payDetails}>
+                                    <b>Item location:</b> Derby, UK<br />
+                                    <b>Collection only</b><br />
+                                    <b>Payment options:</b><br />
+                                    Cash, Paypal, Bank Transfer, Visa, Mastercard<br />
+                                </Typography>
+                            </Box>
+                        </Box>
+                      </CardContent>
+                  </>
               :
-              <>
-              <CardContent>
-                <Typography className={classes.title} color="textSecondary" gutterBottom>
-                  Seller information
-                </Typography>
-                <div className={classes.progress}>
-                    <br /><CircularProgress />
-                </div> 
-              </CardContent>
-              </> 
+                <>
+                    <CardContent>
+                    <Typography className={classes.title} color="textSecondary" gutterBottom>
+                      Seller information
+                    </Typography>
+                    <div className={classes.progress}>
+                        <br /><CircularProgress />
+                    </div> 
+                    </CardContent>
+                </> 
               }     
             </Card>
         );

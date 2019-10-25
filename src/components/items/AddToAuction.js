@@ -12,22 +12,12 @@ import { withRouter } from 'react-router-dom'
 import compose from 'recompose/compose'
 
 const styles = theme => ({
-  dropzone: {
-   fontSize: 12,
-   padding: 10,
-  },
   root: {
     padding: theme.spacing(3, 2),
   },
   itemName: {
     fontStyle: "italic"
   },
-/*
-  dropzoneParagraphClass: {
-    fontSize: 12,
-    padding: 10
-  },
-*/
   divbuttons: {
     width: "100%",
   },
@@ -39,20 +29,6 @@ const styles = theme => ({
     float: "right",
     marginLeft: 20
   },
-  imageWrapper: {
-    display: "flex",
-    marginTop: 10,
-    flexWrap: "wrap",
-    marginBottom: 15,
-  },
-  s3Images: {
-    display: "block",
-    maxWidth: 300,
-    maxHeight: 200,
-    width: "auto",
-    height: "auto",
-    margin: 10
-  }
 });
 
 /*-----------------------------------------------------------------------------
@@ -66,17 +42,29 @@ const soloEnAuction = [
     {key: "start_price", label: "Starting price (optional)", type: "currency", props: {required: false}},
     {key: "reserve_price", label: "Reserve price (optional)", type: "currency", props: {required: false}},
     {key: "min_increment", label: "Minimum increment", type: "currency", props: {required: true}},
+    {key: "delivery_options", "label": "Delivery options", type: "checkbox",
+      props: { items:
+        [{ label: "Post", value: "postage", order: 1 },
+         { label: "Delivery", value: "delivery", order: 2 },
+         { label: "Collection", "value": "collection", order: 3 },
+        ],
+      }
+    },
+    {key: "payments_accepted", "label": "Payment options", type: "checkbox",
+      props: { items:
+        [{ label: "Cash", value: "pay_cash", order: 1 },
+         { label: "Mastercard", value: "pay_mastercard", order: 2 },
+         { label: "Visa", "value": "pay_visa", order: 3 },
+         { label: "American Express", "value": "pay_amex", order: 4 },
+         { label: "Bank transfer", "value": "pay_bank_transfer", order: 5 },
+         { label: "Paypal", "value": "pay_paypal", order: 6 },
+         { label: "Bitcoin", "value": "pay_bitcoin", order: 7 },
+         { label: "Cheque", "value": "pay_cheque", order: 8 },
+         { label: "Venmo", "value": "pay_venmo", order: 9 },
+        ],
+      }
+    },
 /*
-{key: "name", label: "Name", type: "text", props: {required: true, maxlength: 150}},
-type
-currency
-start_time
-end_time
-quantity
-
-//EN
-//min_increment
-
 //DU
 //min_decrement
 //start_price
@@ -209,25 +197,15 @@ class AddToAuction extends Component {
     }
 
     handleChange = (e, key) => {
-
         const value = e.target.value
         this.setState({
             [key]: value
         })
-
     }
 
     handleButton = (e, aucType) => {
-
-        console.log(":::::::")
         console.log(aucType)
-        //console.log(e)
         this.setState({ showAuctionForm: true })
-    }
-
-    handleSuccess = (e, destination) => {
-        console.log(":::: ^^^^^^^^^^^^^^^^^^^^^^^^^^^ ::::")
-        console.log("My destination is "+destination)
     }
 
     // open snackbar
@@ -304,7 +282,6 @@ class AddToAuction extends Component {
                         className = {classes.dropbuttons}
                         color = "primary"
                         variant="contained"
-                        //onClick={(e) => {this.handleSuccess(e, 'show')}}
                         onClick={() => this.props.history.push('/item/'+this.state.itemId+'/'+this.state.itemName)}
                     >
                         Show This Item
@@ -313,7 +290,6 @@ class AddToAuction extends Component {
                         className = {classes.dropbuttons}
                         color = "primary"
                         variant="contained"
-                        //onClick={(e) => {this.handleSuccess(e, 'show')}}
                         onClick={() => this.props.history.push(this.state.itemsURL)}
                     >   
                         Show My Items
