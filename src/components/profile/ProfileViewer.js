@@ -9,6 +9,7 @@ import Typography from '@material-ui/core/Typography'
 //import blue from '@material-ui/core/colors/blue'
 //import AvatarChooser from '../helpers/AvatarChooser'
 import Box from '@material-ui/core/Box'
+import Cookies from 'js-cookie'
 
 const Styles = theme => ({
     paper: {
@@ -30,7 +31,7 @@ class ProfileViewer extends Component {
     } 
 
     componentDidMount() {
-
+        document.title = 'poptape auctions | '+Cookies.get('username')+' | profile'
     }
 
     render() {

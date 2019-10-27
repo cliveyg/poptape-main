@@ -98,6 +98,9 @@ class ItemPageController extends Component {
                 this.setState({ ownerView: true })
             }
             this.setState({ showError: false })
+            document.title = 'poptape auctions | item | '+ this.state.item.name
+        } else {
+            document.title = 'poptape auctions | item'
         }
     }
 

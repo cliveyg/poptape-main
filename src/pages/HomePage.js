@@ -33,6 +33,7 @@ const theme = createMuiTheme({
 
 export default function HomePage() {
     const username = Cookies.get('username')
+    document.title = 'poptape auctions | home'
     //2019-10-31T18:00:00Z
     return (
         <div style={{ width:"100%"}}>
@@ -56,18 +57,31 @@ export default function HomePage() {
                     <Link to='/item/create' style={{ padding: 10 }}>
                         Create item<br />
                     </Link>
+                    <br />
                     <Link to={'/user/'+username} style={{ padding: 10 }}>
                         Current users profile<br />
                     </Link>
                     <Link to={'/user/'+username+'/account'} style={{ padding: 10 }}>
                         Current users account<br />
                     </Link>
+                    <br />
                     <Link to={'/user/blinky'} style={{ padding: 10 }}>
                         blinky profile<br />
                     </Link>
                     <Link to={'/user/môrk'} style={{ padding: 10 }}>
                         môrk profile<br />
                     </Link>
+                    <br />
+                    <Link to={'/user/blinky/favourites'} style={{ padding: 10 }}>
+                        blinky favourites<br />
+                    </Link>
+                    <Link to={'/user/blinky/viewed'} style={{ padding: 10 }}>
+                        blinky recently viewed<br />
+                    </Link>
+                    <Link to={'/user/blinky/purchased'} style={{ padding: 10 }}>
+                        blinky recently purchased<br />
+                    </Link>
+                    <br />
                     <Link to={'/user/blinky/account'} style={{ padding: 10 }}>
                         blinky account<br />
                     </Link>
