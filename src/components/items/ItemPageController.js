@@ -92,8 +92,8 @@ class ItemPageController extends Component {
     componentDidMount() {
     
         if (this.state.item) {
-            console.log("[[ ItemPageController -> componentDidMount [1] ]]")
-            console.log(this.state.item)
+            //console.log("[[ ItemPageController -> componentDidMount [1] ]]")
+            //console.log(this.state.item)
             if (this.state.item.public_id === Cookies.get('public_id')) {
                 this.setState({ ownerView: true })
             }
@@ -102,6 +102,9 @@ class ItemPageController extends Component {
         } else {
             document.title = 'poptape auctions | item'
         }
+
+        //TODO: post to recently viewed for logged in users
+
     }
 
     render() {

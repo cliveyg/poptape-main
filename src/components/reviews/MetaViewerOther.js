@@ -28,7 +28,7 @@ const Styles = theme => ({
     },
 });
 
-class MetaViewer extends Component {
+class MetaViewerOther extends Component {
 
     constructor(props) {
         super(props)
@@ -37,14 +37,16 @@ class MetaViewer extends Component {
             reviewsBy: 0,
             reviewsOf: 0,
             rating: 0,
+            username: this.props.username,
+            publicId: this.props.publicId,
         }
-        console.log("Initialising MetaViewer")
+        console.log("Initialising MetaViewerOther")
     }
 
     componentDidMount() {
 
-        let url = '/reviews/user/'+Cookies.get('public_id')
-        this.setState({ reviewsURL: '/user/'+Cookies.get('username')+'/reviews' })
+        let url = '/reviews/user/'+this.state.publicId
+        this.setState({ reviewsURL: '/user/'+this.state.username+'/reviews' })
 
         const request = require('superagent')
         request.get(url)
@@ -71,8 +73,8 @@ class MetaViewer extends Component {
                     </Typography> 
                     <br />
                     <Typography variant="subtitle1">
-                        {this.state.reviewsOf} reviews of you. <br />
-                        {this.state.reviewsBy} reviews by you. <br />
+                        {this.state.reviewsOf} reviews of {this.state.username}. <br />
+                        {this.state.reviewsBy} reviews by {this.state.username}. <br />
                         <div className={classes.topMargin}>
                         <Link 
                             to={this.state.reviewsURL}
@@ -89,4 +91,4 @@ class MetaViewer extends Component {
 
 }
 
-export default withStyles(Styles)(MetaViewer)
+export default withStyles(Styles)(MetaViewerOther)

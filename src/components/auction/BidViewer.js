@@ -143,15 +143,17 @@ class BidViewer extends Component {
      
         const bidLines = bids.map((bid, idx) => {
 
-            const bidIdA = bid.bid_id.split("-")  //bid.bid_id.substring(25,12)
+            const bidIdA = bid.bid_id.split("-")
             const bidId = bidIdA[4]
+            //console.log(bid)
 
             return  <TableRow key={bid.bid_id}>
                        <TableCell align="left" className={classes.username}>
                            <div className={classes.usernameContainer}>
                                <div className={classes.avatar}>
                                    <AvatarChooser
-                                       avatarName="random"
+                                       //avatarName="random"
+                                       publicId={bid.public_id}
                                        avatarSize="small"
                                    />  
                                </div>

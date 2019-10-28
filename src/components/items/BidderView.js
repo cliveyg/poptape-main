@@ -208,6 +208,8 @@ class BidderView extends Component {
                 <Box>
                     <SellerInfoCard
                         publicId = {this.state.auction.public_id}
+                        auction = {this.state.auction}
+                        itemLocation = {this.state.item.location}
                     />
                 </Box>
                 <Box>

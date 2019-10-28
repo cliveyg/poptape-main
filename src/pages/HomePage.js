@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 
@@ -32,7 +32,7 @@ const theme = createMuiTheme({
 })
 
 export default function HomePage() {
-    const username = Cookies.get('username')
+    const [username, setUsername]  = useState(Cookies.get('username'))
     document.title = 'poptape auctions | home'
     //2019-10-31T18:00:00Z
     return (
@@ -46,25 +46,34 @@ export default function HomePage() {
                 <Typography variant="h3">
                     My homie!
                 </Typography>
-            </Paper>
                 <Typography variant="body1">
-                    <Link to='/' style={{ padding: 10 }}>
-                        Home<br />
-                    </Link>
-                    <Link to={'/user/'+username+'/items'} style={{ padding: 10 }}>
-                        My Items<br />
-                    </Link>
+                    <br />
+                    <br />
                     <Link to='/item/create' style={{ padding: 10 }}>
                         Create item<br />
                     </Link>
                     <br />
-                    <Link to={'/user/'+username} style={{ padding: 10 }}>
-                        Current users profile<br />
-                    </Link>
-                    <Link to={'/user/'+username+'/account'} style={{ padding: 10 }}>
-                        Current users account<br />
-                    </Link>
-                    <br />
+                    {username !== undefined ?
+                        <>
+                        <Link to={'/user/'+username} style={{ padding: 10 }}>
+                            Current users profile<br />
+                        </Link>
+                        <Link to={'/user/'+username+'/account'} style={{ padding: 10 }}>
+                            Current users account<br />
+                        </Link>
+                        <Link to={'/user/'+username+'/messages'} style={{ padding: 10 }}>
+                            Current users messages<br />
+                        </Link>
+                        <Link to={'/user/'+username+'/favourites'} style={{ padding: 10 }}>
+                            Current users favourites<br />
+                        </Link>
+                        <Link to={'/user/'+username+'/items'} style={{ padding: 10 }}>
+                            Current users items<br />
+                        </Link>
+                        <br /><br />
+                        </>
+                    : null
+                    }
                     <Link to={'/user/blinky'} style={{ padding: 10 }}>
                         blinky profile<br />
                     </Link>
@@ -89,6 +98,7 @@ export default function HomePage() {
                         môrk account<br />
                     </Link>
                 </Typography>
+            </Paper>
             </div>
             </MuiThemeProvider>
         </div>

@@ -13,6 +13,8 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import blue from '@material-ui/core/colors/blue'
 import AvatarChooser from '../helpers/AvatarChooser'
 import Box from '@material-ui/core/Box'
+import Cookies from 'js-cookie'
+import CustomizedSnackbars from '../information/CustomSnackbars'
 
 const Styles = theme => ({
   card: {
@@ -63,11 +65,23 @@ class SellerInfoCard extends Component {
 
     constructor(props){
         super(props)
+        const peckish = {
+            "variant": "info",
+            "message": "You must be logged in to save a favourite"
+        }
      
         this.state = {
             showCard: false,
+            showSnack: false,
+            date: new Date().getTime(),
+            peckish: peckish,
+            duration: 1400,
             reviews: 0,
             publicId: this.props.publicId,
+            auction: this.props.auction, 
+            itemLocation: this.props.itemLocation,
+            favChecked: false,
+            favText: "Save this seller",
             username: null,
             loaded: false
         }
@@ -78,6 +92,7 @@ class SellerInfoCard extends Component {
         this.callAuthyAndReviews()
         //this.setState({ loaded: true },
         //              () => { this.setState({ showCard: true })})
+        //console.log(this.state.auction)
     }
 
     callAuthyAndReviews() {
@@ -95,6 +110,7 @@ class SellerInfoCard extends Component {
                         .then(res => {
                             this.setState({ reviews: res.body.total_reviews },
                             () => {
+                                this.callFavourites()
                                 this.setState({ loaded: true },
                                               () => { this.setState({ showCard: true })})
                             })
@@ -110,19 +126,123 @@ class SellerInfoCard extends Component {
                 })        
     }
 
-    callReviews() {
-        const request = require('superagent')
-        request.get('/reviews/of/user/'+this.props.publicId+'?totalonly=true')
-               .set('Accept', 'application/json')
-               .set('Content-Type', 'application/json')
-               .then(res => {
-                    this.setState({ reviews: res.body.total_reviews })
-                })
-               .catch(err => {
-                    console.log(err)
-                })
+    callFavourites = () => {
+
+        const accessToken = Cookies.get('access-token')
+        if (accessToken) {
+            const request = require('superagent')
+            request.get('/list/favourites')
+                   .set('Accept', 'application/json')
+                   .set('Content-Type', 'application/json')
+                   .set('x-access-token', accessToken)
+                   .then(res => {
+                        const favArray = res.body.favourites
+                        for (var i = 0; i < favArray.length; i++) {
+                            if (favArray[i] === this.props.publicId) {
+                                this.setState({ favChecked: true },
+                                              () => { 
+                                                  this.setState(
+                                                    { favText: "Favourite seller!" })
+                                              })    
+                            }
+                        }  
+                        //this.setState({ reviews: res.body.total_reviews })
+                    })
+                   .catch(err => {
+                        console.log(err)
+                    })
+        }
     }
 
+    favChange = () => {
+        if (Cookies.get('access-token')) {
+            if (this.state.favChecked) {
+                this.setState({ favChecked: false},
+                              () => { this.setState({ favText: "Save this seller" }) })
+            } else {
+                this.setState({ favChecked: true},
+                              () => { this.setState({ favText: "Favourite seller!" }) })
+            }
+        } else {
+            this.openSnack()
+        }
+    }
+
+    // open snackbar
+    openSnack = () => {
+        if (this.state.showSnack === true) {
+            this.setState({
+                showSnack: false
+            }, () => {
+                this.setState({
+                    showSnack: true
+                });
+            });
+        } else {
+            this.setState({
+                showSnack: true
+            });
+        }
+    }
+
+    getDeliveryOptions() {
+        const delOpts = this.state.auction.delivery_options
+        if (delOpts.collection &&
+            !delOpts.delivery &&
+            !delOpts.postage) {
+            return "Collection only"
+        } else if (!delOpts.collection &&
+                   delOpts.delivery &&
+                   delOpts.postage) {
+            return "Courier or post"
+        } else if (!delOpts.collection &&
+                   delOpts.delivery &&
+                   !delOpts.postage) {
+            return "Courier only"
+        } else if (!delOpts.collection &&
+                   !delOpts.delivery &&
+                   delOpts.postage) {
+            return "Post only"
+        } else {
+            return "Contact seller for delivery options"
+        }
+    }
+
+    getPaymentOptions() {
+        const payArray = Object.entries(this.state.auction.payment_options)
+        let displayString = ''
+        //TODO: make this better!
+        for (const [paytype, value] of payArray) {
+            if (paytype === 'cash' && value === true) {
+                displayString = 'Cash, '+ displayString
+            }
+            if (paytype === 'cheque' && value === true) {
+                displayString = 'Cheque, '+ displayString
+            }
+            if (paytype === 'bank_transfer' && value === true) {
+                displayString = 'Bank transfer, '+ displayString
+            }
+            if (paytype === 'paypal' && value === true) {
+                displayString = 'Paypal, '+ displayString
+            }
+            if (paytype === 'venmo' && value === true) {
+                displayString = 'Venmo, '+ displayString
+            }
+            if (paytype === 'visa' && value === true) {
+                displayString = 'Visa, '+ displayString
+            }
+            if (paytype === 'mastercard' && value === true) {
+                displayString = 'Mastercard, '+ displayString
+            }
+            if (paytype === 'amex' && value === true) {
+                displayString = 'Amex, '+ displayString
+            }
+            if (paytype === 'bitcion' && value === true) {
+                displayString = 'Bitcoin, '+ displayString
+            }
+        }
+        return displayString
+    }
     
     render() {
         const { classes } = this.props
@@ -136,7 +256,7 @@ class SellerInfoCard extends Component {
                         </Typography>
                         <Box display="flex" flexDirection="row">
                             <Box flex={2} alignItems="flex-start">
-                                <AvatarChooser avatarName="random" avatarSize="large" />
+                                <AvatarChooser publicId={this.props.publicId} avatarSize="large" />
                             </Box>
                             <Box flex={6} alignItems="flex-start">
                                 <Typography variant="h5" className={classes.username}>
@@ -177,20 +297,24 @@ class SellerInfoCard extends Component {
                                     <Box flex={1}>
                                         <FormControlLabel
                                             style={{fontSize: "0.8em" }}
-                                            control={<Checkbox icon={<FavoriteBorder />} 
-                                            checkedIcon={<Favorite />} 
-                                            value={this.props.publicId} />}
-                                            label="Save this seller"
+                                            control={<Checkbox 
+                                                        icon={<FavoriteBorder />} 
+                                                        checkedIcon={<Favorite />} 
+                                                        onChange={e => this.favChange(e)}
+                                                        checked={this.state.favChecked}
+                                                        value={this.props.publicId} 
+                                                     />}
+                                            label={this.state.favText}
                                         />
                                     </Box>
                                 </Box>
                             </Box>
                             <Box flex={7}>
                                 <Typography className={classes.payDetails}>
-                                    <b>Item location:</b> Derby, UK<br />
-                                    <b>Collection only</b><br />
+                                    <b>Item location:</b> {this.state.itemLocation}<br />
+                                    <b>{this.getDeliveryOptions()}</b><br />
                                     <b>Payment options:</b><br />
-                                    Cash, Paypal, Bank Transfer, Visa, Mastercard<br />
+                                    {this.getPaymentOptions()}<br />
                                 </Typography>
                             </Box>
                         </Box>
@@ -208,6 +332,15 @@ class SellerInfoCard extends Component {
                     </CardContent>
                 </> 
               }     
+              {this.state.showSnack ?
+                  <CustomizedSnackbars
+                      duration = {this.state.duration}
+                      key_date = {this.state.date}
+                      variant  = {this.state.peckish.variant}
+                      message  = {this.state.peckish.message}
+                  />
+              : null
+              }
             </Card>
         );
     }

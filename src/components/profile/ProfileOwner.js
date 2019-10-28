@@ -12,11 +12,14 @@ import Box from '@material-ui/core/Box'
 import AvatarChooser from '../helpers/AvatarChooser'
 import AvatarGrid from '../helpers/AvatarGrid'
 import {DropzoneDialog} from 'material-ui-dropzone'
+import CustomizedSnackbars from '../information/CustomSnackbars'
 
 import Dialog from '@material-ui/core/Dialog'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import DialogContent from '@material-ui/core/DialogContent'
 import MaxTextField from '../helpers/MaxTextField'
+
+import MetaViewer from '../reviews/MetaViewer'
 
 import { withRouter } from 'react-router-dom'
 import compose from 'recompose/compose'
@@ -57,9 +60,16 @@ class ProfileOwner extends Component {
   
     constructor(props){
         super(props)
+        const peckish = {
+            "variant": "success",
+            "message": "Profile updated"
+        }
      
         this.state = {
-            //avatarName: "blank_avatar_groovy_three",
+            showSnack: false,
+            duration: 1500,
+            peckish: peckish,
+            date: new Date().getTime(),
             openUpload: false,
             openDialog: false,
             avatarObj: null,
@@ -74,6 +84,23 @@ class ProfileOwner extends Component {
         this.setState({
             openUpload: true,
         });
+    }
+
+    // open snackbar
+    openSnack = () => {
+        if (this.state.showSnack === true) {
+            this.setState({
+                showSnack: false
+            }, () => {
+                this.setState({
+                    showSnack: true
+                });
+            });
+        } else {
+            this.setState({
+                showSnack: true
+            });
+        }
     }
 
     // close dropzone dialog
@@ -104,7 +131,30 @@ class ProfileOwner extends Component {
     }
 
     submitAboutMe = () => {
-        console.log("in submitAboutMe")
+        //console.log(this.state.aboutMe)
+        const request = require('superagent')
+        request.post('/profile')
+               .send(JSON.stringify({'about_me': this.state.aboutMe}))
+               .set('Accept', 'application/json')
+               .set('Content-Type', 'application/json')
+               .set('x-access-token',Cookies.get('access-token'))
+               .then(res => {
+                    const peckish = {
+                        variant: "success",
+                        message: "Profile updated"
+                    }
+                    this.setState({ peckish: peckish },
+                                  () => { this.openSnack() })
+                })
+               .catch(err => {
+                    console.log(err)
+                    const peckish = {
+                        variant: "error",
+                        message: "Computer says no"
+                    }
+                    this.setState({ peckish: peckish },
+                                  () => { this.openSnack() })
+                });
     }
 
     handleStandard = () => {
@@ -176,8 +226,8 @@ class ProfileOwner extends Component {
                     <Typography className={classes.title}>
                         Your profile
                     </Typography>
-                        <Card>
-                        <CardContent>                    
+                    <Card>
+                    <CardContent>                    
                     <Box display="flex" flexDirection="row">
                         <Box flex={1} className={classes.avatarBox}>
                         <AvatarChooser
@@ -211,7 +261,7 @@ class ProfileOwner extends Component {
                                 </Box>
                             </Box>
                         </Box>
-                        <Box flexGrow={6}>
+                        <Box flex={2}>
                                 <Button
                                     className = {classes.dropbuttons}
                                     color = "primary"
@@ -242,9 +292,15 @@ class ProfileOwner extends Component {
                                     My purchase history
                                 </Button>
                         </Box>
+                        <Box flex={2}>
+                            <MetaViewer />
+                        </Box>
+                        <Box flexGrow={5}>
+                            
+                        </Box>
                     </Box>
-                        </CardContent>
-                        </Card>
+                    </CardContent>
+                    </Card>
                     <Box className={classes.about_me}>
                         <MaxTextField
                             multiline
@@ -304,6 +360,15 @@ class ProfileOwner extends Component {
                         </Dialog>                            
                     </Box>
                 </Paper>
+                {this.state.showSnack ?
+                    <CustomizedSnackbars
+                        duration = {this.state.duration}
+                        key_date = {this.state.date}
+                        variant  = {this.state.peckish.variant}
+                        message  = {this.state.peckish.message}
+                    />
+                : null
+                }
             </Box>
         )
     }

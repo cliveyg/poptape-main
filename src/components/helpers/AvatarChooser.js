@@ -104,13 +104,18 @@ class AvatarChooser extends Component {
             avatarObj: this.props.avatarObj || null,
             bespokeAvatar: this.props.bespokeAvatar || null,
             profile: this.props.profile || null,
+            publicId: this.props.publicId || null,
         }
         //console.log("[[ AvatarChooser ]] -> constructor ")
         this.setAvatar = this.setAvatar.bind(this)
         if (!this.props.profile && !this.props.avatarObj) {
             // profile not passed in so we need to get it
             const request = require('superagent')
-            request.get('/profile')
+            let profileURL = '/profile'
+            if (this.props.publicId) {
+                profileURL = '/profile/'+this.props.publicId
+            }
+            request.get(profileURL)
                    .set('Accept', 'application/json')
                    .set('Content-Type', 'application/json')
                    .set('x-access-token',Cookies.get('access-token'))
