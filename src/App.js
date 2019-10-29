@@ -13,8 +13,10 @@ import UserReviewsPage from './pages/UserReviewsPage'
 import UserFavouritesPage from './pages/UserFavouritesPage'
 import UserPurchasedPage from './pages/UserPurchasedPage'
 import UserViewedPage from './pages/UserViewedPage'
+import UserWatchlistPage from './pages/UserWatchlistPage'
 import Messages from './pages/Messages'
 import NotFound from './pages/NotFound'
+import TestPage from './pages/TestPage'
 
 /*
 const theme = createMuiTheme({
@@ -49,12 +51,14 @@ class App extends Component {
               <Route exact path="/user/:username/account" component={UserAccountPage} />
               <Route exact path="/user/:username/reviews" component={UserReviewsPage} />
               <Route exact path="/user/:username/favourites" component={UserFavouritesPage} />
+              <Route exact path="/user/:username/watchlist" component={UserWatchlistPage} />
               <Route exact path="/user/:username/purchased" component={UserPurchasedPage} />
               <Route exact path="/user/:username/viewed" component={UserViewedPage} />
               <Route exact path="/user/:username/messages" component={Messages} />
               <Route exact path="/user/:username" component={UserProfilePage} />
               <Route exact path="/item/create" component={CreateItemPage} />
               <Route path="/item/:item_id/:item_name" component={ItemPage} />
+              <Route exact path="/testy" component={TestPage} />
               <Route component={NotFound} />
             </Switch>
         );

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 
@@ -7,7 +7,6 @@ import 'typeface-varela-round'
 import MainNavBar from '../components/navigation/MainNavBar'
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
-import Cookies from 'js-cookie'
 
 const theme = createMuiTheme({
   typography: {
@@ -32,9 +31,7 @@ const theme = createMuiTheme({
 })
 
 export default function NotFound() {
-    const [username, setUsername]  = useState(Cookies.get('username'))
     document.title = 'poptape auctions | not found'
-    //2019-10-31T18:00:00Z
     return (
         <div style={{ width:"100%"}}>
             <MuiThemeProvider theme={theme}>

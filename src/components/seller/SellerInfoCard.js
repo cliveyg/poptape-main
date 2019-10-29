@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import { withStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
-//import CardActions from '@material-ui/core/CardActions'
 import CardContent from '@material-ui/core/CardContent'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
@@ -23,8 +22,6 @@ const Styles = theme => ({
     marginLeft: 10,
     marginRight: 10,
     minWidth: 275,
-    //minHeight: 200,
-    //height: 243,
   },
   paddingBeLess: {
     paddingLeft: 2,
@@ -157,11 +154,41 @@ class SellerInfoCard extends Component {
     favChange = () => {
         if (Cookies.get('access-token')) {
             if (this.state.favChecked) {
-                this.setState({ favChecked: false},
-                              () => { this.setState({ favText: "Save this seller" }) })
+                const uuidData = { 'uuid': this.props.publicId }
+                const request = require('superagent')
+                request.delete('/list/favourites')
+                       .send(JSON.stringify(uuidData))
+                       .set('Accept', 'application/json')
+                       .set('Content-Type', 'application/json')
+                       .set('x-access-token', Cookies.get('access-token'))
+                       .then(res => {
+                                    this.setState({ favChecked: false },
+                                                  () => {
+                                                      this.setState(
+                                                        { favText: "Save this seller" })
+                                                  })
+                        })
+                       .catch(err => {
+                            console.log(err)
+                        })
             } else {
-                this.setState({ favChecked: true},
-                              () => { this.setState({ favText: "Favourite seller!" }) })
+                const uuidData = { 'uuid': this.props.publicId }
+                const request = require('superagent')
+                request.post('/list/favourites')
+                       .send(JSON.stringify(uuidData))
+                       .set('Accept', 'application/json')
+                       .set('Content-Type', 'application/json')
+                       .set('x-access-token', Cookies.get('access-token'))
+                       .then(res => {
+                                    this.setState({ favChecked: true },
+                                                  () => {
+                                                      this.setState(
+                                                        { favText: "Favourite seller!" })
+                                                  })
+                        })
+                       .catch(err => {
+                            console.log(err)
+                        })
             }
         } else {
             this.openSnack()
@@ -241,6 +268,8 @@ class SellerInfoCard extends Component {
                 displayString = 'Bitcoin, '+ displayString
             }
         }
+        // remove trailing comma
+        displayString = displayString.substring(0, displayString.length - 2)
         return displayString
     }
     

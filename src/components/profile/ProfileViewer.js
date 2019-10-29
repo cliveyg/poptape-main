@@ -3,13 +3,9 @@ import { withStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
 import Paper from '@material-ui/core/Paper'
 import CardContent from '@material-ui/core/CardContent'
-//import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
-//import CircularProgress from '@material-ui/core/CircularProgress'
-//import blue from '@material-ui/core/colors/blue'
 import AvatarChooser from '../helpers/AvatarChooser'
 import Box from '@material-ui/core/Box'
-import Cookies from 'js-cookie'
 import MetaViewerOther from '../reviews/MetaViewerOther'
 
 const Styles = theme => ({

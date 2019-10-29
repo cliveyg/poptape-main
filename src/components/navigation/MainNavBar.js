@@ -179,8 +179,11 @@ export default function MainNavBar() {
         }
     }
 
+    function onClickIcon(e) {
+        console.log("Icon clicked")      
+    }
+
   const menuId = 'primary-search-account-menu';
-  //const userLink = '/user/'+username
   const renderMenu = (
     <Menu
       anchorEl={anchorEl}
@@ -307,6 +310,7 @@ export default function MainNavBar() {
             edge="start"
             className={classes.menuButtonDark}
             color="inherit"
+            onClick={(e) => onClickIcon()}
             aria-label="open drawer"
           >
             <BlurOn />

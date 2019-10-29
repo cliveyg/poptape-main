@@ -1,15 +1,12 @@
 import React from 'react'
-//import { Link } from 'react-router-dom'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 
 import 'typeface-varela-round'
 import MainNavBar from '../components/navigation/MainNavBar'
-//import Paper from '@material-ui/core/Paper'
-//import Typography from '@material-ui/core/Typography'
-import Cookies from 'js-cookie'
 import Box from '@material-ui/core/Box'
-import ProfileViewer from '../components/profile/ProfileViewer'
-import ProfileOwner from '../components/profile/ProfileOwner'
+import { useHistory } from "react-router-dom"
+import Cookies from 'js-cookie'
+import Watchlist from '../components/user/Watchlist'
 
 const theme = createMuiTheme({
   typography: {
@@ -33,18 +30,16 @@ const theme = createMuiTheme({
   }
 })
 
-export default function UserProfilePage(props) {
+export default function UserWatchlistPage(props) {
 
-    const username = Cookies.get('username')
-    const [owner, setOwner] = React.useState(null)
+    let history = useHistory()
 
     const urlPath = props.location.pathname
-    const urlArray = urlPath.split("/")    
+    const urlArray = urlPath.split("/")
+
     const urlUsername = urlArray[2]
-    if (urlUsername === username) {
-        if (!owner) {
-            setOwner(true)
-        }
+    if (urlUsername !== Cookies.get('username')) {
+        history.push("/user/"+urlUsername)
     }
 
     return (
@@ -54,13 +49,7 @@ export default function UserProfilePage(props) {
                 <MainNavBar />
             </header>
             <Box>
-            {owner ?
-                <ProfileOwner />
-            :
-                <ProfileViewer
-                    username  = {urlUsername}
-                />
-            }            
+                <Watchlist />
             </Box>
             </MuiThemeProvider>
         </div>

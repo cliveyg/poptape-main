@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 
@@ -32,9 +32,9 @@ const theme = createMuiTheme({
 })
 
 export default function HomePage() {
-    const [username, setUsername]  = useState(Cookies.get('username'))
+    const username = Cookies.get('username')
     document.title = 'poptape auctions | home'
-    //2019-10-31T18:00:00Z
+
     return (
         <div style={{ width:"100%"}}>
             <MuiThemeProvider theme={theme}>
@@ -53,6 +53,10 @@ export default function HomePage() {
                         Create item<br />
                     </Link>
                     <br />
+                    <Link to='/testy' style={{ padding: 10 }}>
+                        Test page<br />
+                    </Link>
+                    <br />
                     {username !== undefined ?
                         <>
                         <Link to={'/user/'+username} style={{ padding: 10 }}>
@@ -66,6 +70,12 @@ export default function HomePage() {
                         </Link>
                         <Link to={'/user/'+username+'/favourites'} style={{ padding: 10 }}>
                             Current users favourites<br />
+                        </Link>
+                        <Link to={'/user/'+username+'/watchlist'} style={{ padding: 10 }}>
+                            Current users watchlist<br />
+                        </Link>
+                        <Link to={'/user/'+username+'/viewed'} style={{ padding: 10 }}>
+                            Current users recently viewed<br />
                         </Link>
                         <Link to={'/user/'+username+'/items'} style={{ padding: 10 }}>
                             Current users items<br />

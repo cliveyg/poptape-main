@@ -13,10 +13,6 @@ import { Link } from 'react-router-dom'
 import blue from '@material-ui/core/colors/blue'
 
 const styles = theme => ({
-  progress: {
-    verticalAlign: "middle",
-    textAlign: "center"
-  },
   purp: {
     color: "#9c27b0",
   },
@@ -92,6 +88,7 @@ class InformationBox extends Component {
             currentBestBid: props.currentBestBid || null,
             auctionType: null,
             auctionTypeText: null,
+            toolTip: "",
             peopleWatching: this.props.peopleWatching || 0,
         }
         
@@ -99,7 +96,7 @@ class InformationBox extends Component {
     }
 
     componentDidMount() {
-        const { classes } = this.props
+        //const { classes } = this.props
         if (!this.state.auction) console.log("NO AUCTION!")
         if (!this.state.currentLot) console.log("NO CURRENT LOT!")
         if (!this.state.item) console.log("NO ITEM!")
@@ -123,7 +120,15 @@ class InformationBox extends Component {
                       
         }
         this.setState({ auctionType: aType })
-        this.setState({ auctionTypeText: aText })
+        this.setState({ auctionTypeText: aText },
+                      () => {
+                          const tippy = <Tooltip 
+                                            title={this.state.auctionTypeText}
+                                        >
+                                            <InfoIcon />
+                                        </Tooltip>
+                          this.setState({ toolTip: tippy })
+                      })
     }
 
     numberWithCommas = (n) => {
@@ -164,7 +169,12 @@ class InformationBox extends Component {
                         <Typography variant="h5">
                             <span className={classes.auctionType}>{this.state.auctionType}</span>
                             <IconButton aria-label={`Info about auction type`} className={classes.infoIcon}>
-                                <InfoIcon />>
+                                    <Link 
+                                        className={classes.iconLink} 
+                                        to='/auction/help'
+                                    >
+                                        {this.state.toolTip}
+                                    </Link>
                             </IconButton>
                             <br />
                         </Typography>

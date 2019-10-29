@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import { withStyles } from '@material-ui/core/styles'
-import Cookies from 'js-cookie'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import Typography from '@material-ui/core/Typography'
@@ -39,12 +38,14 @@ class MetaViewerOther extends Component {
             rating: 0,
             username: this.props.username,
             publicId: this.props.publicId,
+            setLinky: ""
         }
         console.log("Initialising MetaViewerOther")
     }
 
     componentDidMount() {
 
+        const { classes } = this.props
         let url = '/reviews/user/'+this.state.publicId
         this.setState({ reviewsURL: '/user/'+this.state.username+'/reviews' })
 
@@ -56,6 +57,15 @@ class MetaViewerOther extends Component {
                     this.setState({ rating: res.body.calculated_score })
                     this.setState({ reviewsOf: res.body.total_reviews_of })
                     this.setState({ reviewsBy: res.body.total_reviews_by })
+
+                    const linky = <Link
+                                      to={this.state.reviewsURL}
+                                      className={classes.linky}
+                                  >
+                                      Go to reviews >>
+                                  </Link>
+                    this.setState({ setLinky: linky })
+
                 })
                .catch(err => {
                     console.log(err)
@@ -76,12 +86,7 @@ class MetaViewerOther extends Component {
                         {this.state.reviewsOf} reviews of {this.state.username}. <br />
                         {this.state.reviewsBy} reviews by {this.state.username}. <br />
                         <div className={classes.topMargin}>
-                        <Link 
-                            to={this.state.reviewsURL}
-                            className={classes.linky}
-                        >
-                            Go to reviews >>
-                        </Link>
+                            {this.state.setLinky}
                         </div>
                     </Typography>
                 </CardContent>

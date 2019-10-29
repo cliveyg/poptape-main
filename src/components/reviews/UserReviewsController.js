@@ -12,6 +12,9 @@ const Styles = theme => ({
     itemDescriptionColumn: {
         //backgroundColor: "orange",
     },
+    boxWidth: {
+        width: "100%",
+    },
 });
 
 class UserReviewsController extends Component {
@@ -64,7 +67,7 @@ class UserReviewsController extends Component {
         const { classes } = this.props
 
         return (
-            <Box style={{width: "100%"}}>
+            <Box className={classes.boxWidth}>
                 <Typography variant="h5" component="h5">
                     User reviews<br />
                 </Typography>

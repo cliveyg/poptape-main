@@ -41,6 +41,15 @@ const useStyles = makeStyles({
       color: "white"
     },    
   },
+  watchingThisButton: {
+    backgroundColor: blue[300],
+    color: "white",
+    textTransform: "none",
+    "&:hover": {
+      color: blue[600],
+      backgroundColor: "white"
+    },
+  },
   watchingBlurb: {
     marginLeft: 5,
   },
@@ -81,12 +90,66 @@ export default function AuctionCard(props) {
 
     const [bidValue, setBidValue] = useState(0.00)
     const [showSnack, setShowSnack] = useState(false)
+    const [watching, setWatching] = useState(false)
     const minBid = props.minBid
     const formattedMinBid = numberWithCommas(props.minBid)
 
     function numberWithCommas(n) {
             return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
+
+    function sendToWatchlist(putOnList) {
+
+        const uuidData = { 'uuid': props.itemId }
+        const request = require('superagent')
+
+        if (putOnList) {
+            request.post('/list/watchlist')
+                   .send(JSON.stringify(uuidData))
+                   .set('Accept', 'application/json')
+                   .set('Content-Type', 'application/json')
+                   .set('x-access-token', Cookies.get('access-token'))
+                   .then(res => {
+                        setWatching(true)
+                    })
+                   .catch(err => {
+                        console.log(err)
+                    })
+        } else {
+            request.delete('/list/watchlist')
+                   .send(JSON.stringify(uuidData))
+                   .set('Accept', 'application/json')
+                   .set('Content-Type', 'application/json')
+                   .set('x-access-token', Cookies.get('access-token'))
+                   .then(res => {
+                        setWatching(false)
+                    })  
+                   .catch(err => {
+                        console.log(err)
+                    })  
+        }
+    }
+
+    // set the watching button
+    const accessToken = Cookies.get('access-token')
+    if (accessToken) {
+        const request = require('superagent')
+        request.get('/list/watchlist')
+               .set('Accept', 'application/json')
+               .set('Content-Type', 'application/json')
+               .set('x-access-token', accessToken)
+               .then(res => {
+                    const favArray = res.body.watchlist
+                    for (var i = 0; i < favArray.length; i++) {
+                        if (favArray[i] === props.itemId) {
+                            setWatching(true)
+                        }
+                    }  
+                })
+               .catch(err => {
+                    console.log(err)
+                })
+    }    
 
     const bidField =
             <CurrencyTextField
@@ -164,14 +227,27 @@ export default function AuctionCard(props) {
                 </Typography>
                 </Box>
                 <Box flex={1} align="right">
-                <Button
-                    variant="outlined"
-                    size="small"
-                    className={classes.watchThisButton}
-                    startIcon={<VisibilityIcon />}
-                >
-                    Watch
-                </Button>
+                {watching ?
+                    <Button
+                        variant="outlined"
+                        size="small"
+                        className={classes.watchingThisButton}
+                        startIcon={<VisibilityIcon />}
+                        onClick={(e) => sendToWatchlist(false)}
+                    >
+                        Watching
+                    </Button>
+                :
+                    <Button
+                        variant="outlined"
+                        size="small"
+                        className={classes.watchThisButton}
+                        startIcon={<VisibilityIcon />}
+                        onClick={(e) => sendToWatchlist(true)}
+                    >
+                        Watch
+                    </Button>
+                }
                 </Box>
             </Box>
           </CardContent>

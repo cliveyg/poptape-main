@@ -165,6 +165,26 @@ class BidderView extends Component {
         if (!this.state.currentLot) console.log("NO CURRENT LOT!")
         if (!this.state.item) console.log("NO ITEM!")
         //this.getBidDataFromAuctionHouse(this.state.currentLot.lot_id)
+
+        // add to recently viewed list
+        const accessToken = Cookies.get('access-token')
+        if (accessToken) {
+
+            const uuidData = { 'uuid': this.state.item.item_id }
+            const request = require('superagent')
+            request.post('/list/viewed')
+                   .send(JSON.stringify(uuidData))
+                   .set('Accept', 'application/json')
+                   .set('Content-Type', 'application/json')
+                   .set('x-access-token', accessToken)
+                   .then(res => {
+                        console.log("item added to recently viewed")
+                    })
+                   .catch(err => {
+                        console.log(err)
+                    })
+        }
+
     }
 
     calculateMinimumBid() {
@@ -202,6 +222,7 @@ class BidderView extends Component {
                         <AuctionCard 
                             gotBid = {(bid) => {this.gotBid(bid)}}
                             minBid = {this.calculateMinimumBid()}
+                            itemId = {this.state.item.item_id}
                         />
                     </Box>
                 </Box>

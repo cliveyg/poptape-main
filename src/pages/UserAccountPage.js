@@ -35,7 +35,7 @@ const theme = createMuiTheme({
 
 export default function UserAccountPage(props) {
 
-    const [username, setUsername] = useState(Cookies.get('username'))
+    const username = Cookies.get('username')
     const [accountAuthed, setAccountAuthed] = useState(
                                                 Cookies.get('account-access-token') || null);
 

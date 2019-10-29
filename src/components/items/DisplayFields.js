@@ -40,8 +40,6 @@ export default function DisplayFields(props) {
     const classes = useStyles()
   
     const [showCard, setShowCard] = useState(false)
-    //const [username, setUsername] = useState(null)
-    //const [loaded, setLoaded]     = useState(false)
 
     //console.log(props.item)
 //    console.log(props.auctionData)
