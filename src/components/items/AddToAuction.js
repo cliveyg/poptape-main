@@ -298,7 +298,7 @@ class AddToAuction extends Component {
                         className = {classes.dropbuttons}
                         color = "primary"
                         variant="contained"
-                        onClick={() => this.props.history.push('/item/create')}
+                        onClick={() => window.location.reload()}
                     >
                         Create Another
                     </Button>

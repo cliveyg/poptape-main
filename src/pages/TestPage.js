@@ -4,7 +4,8 @@ import 'typeface-varela-round'
 import MainNavBar from '../components/navigation/MainNavBar'
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
-import GridFromListerMS from '../components/helpers/GridFromListerMS'
+//import GridFromListerMS from '../components/helpers/GridFromListerMS'
+import GridFromCategory from '../components/helpers/GridFromCategory'
 
 const theme = createMuiTheme({
   typography: {
@@ -27,7 +28,11 @@ const theme = createMuiTheme({
     }
   }
 })
-
+/*
+                <GridFromListerMS
+                    listType = 'viewed'
+                />
+*/
 export default function TestPage() {
     document.title = 'poptape auctions | test page'
     return (
@@ -41,8 +46,9 @@ export default function TestPage() {
                 <Typography variant="h3">
                     Testy testy test<br /><br />
                 </Typography>
-                <GridFromListerMS
-                    listType = 'viewed'
+                <GridFromCategory
+                    category = 'cars:21000'
+                    categoryLabel = "car "
                 />
             </Paper>
             </div>

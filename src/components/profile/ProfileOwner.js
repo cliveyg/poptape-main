@@ -267,6 +267,16 @@ class ProfileOwner extends Component {
                                     color = "primary"
                                     variant="outlined"
                                     size="small"
+                                    onClick={() => this.props.history.push('/user/'+this.state.username+'/watchlist')}
+                                >
+                                    My watchlist
+                                </Button>
+                                <br />
+                                <Button
+                                    className = {classes.dropbuttons}
+                                    color = "primary"
+                                    variant="outlined"
+                                    size="small"
                                     onClick={() => this.props.history.push('/user/'+this.state.username+'/favourites')}
                                 >
                                     My favourites

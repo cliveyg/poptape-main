@@ -47,7 +47,7 @@ const styles = theme => ({
   },
 });
 
-class GridFromListerMS extends Component {
+class GridFromCategory extends Component {
 
     constructor(props) {
         super(props)
@@ -63,8 +63,8 @@ class GridFromListerMS extends Component {
             showLoader: true,
             showNoItems: false,
             fotosURL: this.props.fotosURL || '/fotos/item/',
-            listType: this.props.listType, 
-            listTypeLabel: this.props.listTypeLabel || "",
+            category: this.props.category, 
+            categoryLabel: this.props.categoryLabel || "",
             duration: 1900,
             item: '',
             items: [],
@@ -91,53 +91,32 @@ class GridFromListerMS extends Component {
         }
 
         const request = require('superagent')
-        const listURL = '/list/'+this.state.listType
+        const listURL = '/items/cat/'+this.state.category
         request.get(listURL)
                .set('Accept', 'application/json')
                .set('Content-Type', 'application/json')
-               .set('x-access-token', Cookies.get('access-token'))
                .then(res => {
-
-                        const body = res.body
-                        if ( body[this.state.listType].length === 0) {
-                            this.setState({showLoader: false},
-                                () => { this.setState({showNoItems: true}) })
-                        } else {
-                            const itemIds = { 'item_ids': body[this.state.listType] }
-                            const fotosURL = this.state.fotosURL
-                            const request2 = require('superagent')
-                            request2.post('/items/bulk/fetch')
-                                    .send(JSON.stringify(itemIds))
-                                    .set('Accept', 'application/json')
-                                    .set('Content-Type', 'application/json')
-                                    .then(res => {
-
-                                        const itemsArray = res.body.items
-                                        itemsArray.forEach(function(item, idx) {
-                                            let url = fotosURL+item.item_id
-                                            request.get(url)
-                                                   .set('Accept', 'application/json')
-                                                   .set('Content-Type', 'application/json')
-                                                   .set('x-access-token', Cookies.get('access-token'))
-                                                   .then(res => {
-                                                        item['fotos'] = res.body.fotos
-                                                        setUpdated(item)
-                                                    })
-                                                   .catch(err => {
-                                                        if (err.status === 404) {
-                                                            item['fotos'] = []
-                                                            setUpdated(item)
-                                                        } else {
-                                                            console.log(err)
-                                                        }
-                                                    })
-
-                                        })
-                                    })
-                                    .catch(err => {
+                    const itemsArray = res.body.items
+                    const fotosURL = this.state.fotosURL
+                    itemsArray.forEach(function(item, idx) {
+                        let url = fotosURL+item.item_id
+                        request.get(url)
+                               .set('Accept', 'application/json')
+                               .set('Content-Type', 'application/json')
+                               .set('x-access-token', Cookies.get('access-token'))
+                               .then(res => {
+                                    item['fotos'] = res.body.fotos
+                                    setUpdated(item)
+                                })
+                               .catch(err => {
+                                    if (err.status === 404) {
+                                        item['fotos'] = []
+                                        setUpdated(item)
+                                    } else {
                                         console.log(err)
-                                    })
-                        }
+                                    }
+                                })
+                    })
                 })
                .catch(err => {
                     console.log(err)
@@ -165,7 +144,7 @@ class GridFromListerMS extends Component {
                         }
                         this.setState({ peckish: peckish },
                                       () => { this.openSnack() })
-                    }
+                    }       
                 }); 
 
     }
@@ -245,7 +224,7 @@ class GridFromListerMS extends Component {
             {this.state.showNoItems ?
             <div style={{ width: '100%' }}>
                 <Typography className={classes.title} color="textSecondary" gutterBottom>
-                  You have no {this.state.listTypeLabel}items
+                  You have no {this.state.categoryLabel}items
                 </Typography>
                 <div className={classes.noItems}>
                     <br />
@@ -272,4 +251,4 @@ class GridFromListerMS extends Component {
 
 }
 
-export default compose(withStyles(styles))(withRouter(GridFromListerMS))
+export default compose(withStyles(styles))(withRouter(GridFromCategory))
