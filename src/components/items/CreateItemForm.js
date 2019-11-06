@@ -187,10 +187,10 @@ const carFields = [
     },
     { key: "drivetrain", label: "Drivetrain", type: "select",
       props: { items:
-        [{ label: "FWD", value: "fwd", order: 1},
-         { label: "RWD", value: "rwd", order: 2},
-         { label: "4WD", value: "4wd", order: 3},
-         { label: "AWD", value: "awd", order: 4},
+        [{ label: "Front wheel drive", value: "fwd", order: 1},
+         { label: "Rear wheel drive", value: "rwd", order: 2},
+         { label: "4x4", value: "4wd", order: 3},
+         { label: "All wheel drive", value: "awd", order: 4},
          { label: "Other", value: "other", order: 5},
         ],
       }

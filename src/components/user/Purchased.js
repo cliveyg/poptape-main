@@ -27,7 +27,7 @@ const Styles = theme => ({
     },
 })
 
-class RecentlyViewed extends Component {
+class Purchased extends Component {
   
     constructor(props){
         super(props)
@@ -49,16 +49,14 @@ class RecentlyViewed extends Component {
             <Box>
                 <Paper className={classes.paper}>
                     <Typography className={classes.title}>
-                        Items you recently viewed
+                        Your purchase history
                     </Typography>
                     <Box display="flex" flexDirection="row">
                         <Box className = {classes.menuBox}>
-                            <SideMenu selected="viewed" />
+                            <SideMenu selected="purchased" />
                         </Box>
                         <Box flexGrow={1}>
-                            <GridFromListerMS
-                                listType = 'viewed'
-                            />                        
+                            purchased stuff
                         </Box>
                     </Box>
                 </Paper>
@@ -68,4 +66,4 @@ class RecentlyViewed extends Component {
 
 }
 
-export default compose(withStyles(Styles))(withRouter(RecentlyViewed))
+export default compose(withStyles(Styles))(withRouter(Purchased))

@@ -4,6 +4,7 @@ import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 import Box from '@material-ui/core/Box'
 import GridFromListerMS from '../helpers/GridFromListerMS'
+import SideMenu from '../navigation/SideMenu'
 
 const Styles = theme => ({
     paper: {
@@ -16,6 +17,10 @@ const Styles = theme => ({
     },
     title: {
         fontSize: "1.4em",
+    },
+    menuBox: {
+        paddingRight: 20,
+        //width: 400,
     },
 })
 
@@ -43,10 +48,15 @@ class Watchlist extends Component {
                     <Typography className={classes.title}>
                         Your watchlist
                     </Typography>
-                    <Box>
-                        <GridFromListerMS
-                            listType = 'watchlist'
-                        />                        
+                    <Box display="flex" flexDirection="row">
+                        <Box className = {classes.menuBox}>
+                            <SideMenu selected="watchlist" />
+                        </Box>
+                        <Box flexGrow={1}>
+                            <GridFromListerMS
+                                listType = 'watchlist'
+                            />                        
+                        </Box>
                     </Box>
                 </Paper>
             </Box>

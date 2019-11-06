@@ -6,6 +6,7 @@ import MainNavBar from '../components/navigation/MainNavBar'
 import Box from '@material-ui/core/Box'
 import { useHistory } from "react-router-dom"
 import Cookies from 'js-cookie'
+import Purchased from '../components/user/Purchased'
 
 const theme = createMuiTheme({
   typography: {
@@ -50,7 +51,7 @@ export default function UserPurchasedPage(props) {
                 <MainNavBar />
             </header>
             <Box>
-                User purchased
+                <Purchased />
             </Box>
             </MuiThemeProvider>
         </div>

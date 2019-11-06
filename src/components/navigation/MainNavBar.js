@@ -137,6 +137,47 @@ export default function MainNavBar() {
     const [showLoginPopup, setLoginPopup] = React.useState(false)
     const [showSignupPopup, setSignupPopup] = React.useState(false)
     const [userLink, setUserLink] = React.useState('/user/')
+    const [notifs, setNotifs] = React.useState(0)
+    const [mails, setMails] = React.useState(0)
+    const [messagesSet, setMessages] = React.useState(false)
+
+    if (loggedIn) {
+        getMessageData()
+    } else {
+        // set notifications and messages to zero
+        if (!messagesSet) {
+            setNotifs(0)
+            setMails(0)
+            setMessages(true)
+        }
+    }
+
+    function getMessageData() {
+
+        const request = require('superagent')
+        request.get('/messages/info')
+               .set('Accept', 'application/json')
+               .set('Content-Type', 'application/json')
+               .set('x-access-token', Cookies.get('access-token'))
+               .then(res => {
+                    const messageInfo = res.body 
+                    setNotifs(messageInfo.unread_notifications)
+                    setMails(messageInfo.unread_mails)
+                })
+               .catch(err => {
+                    console.log(err)
+                    setNotifs(0)
+                    setMails(0)
+                })
+    }
+
+    function getMails() {
+        return mails
+    }
+
+    function getNotifs() {
+        return notifs
+    }
 
     function handleProfileMenuOpen(event) {
         if (loggedIn) {
@@ -227,7 +268,7 @@ export default function MainNavBar() {
       <MenuItem>
         <IconButton aria-label="show 4 new mails" color="inherit">
           <Badge
-            badgeContent={4}
+            badgeContent={getMails()}
             classes={{ badge: classes.customBadgeGreen }}
           >
             <MailIcon />
@@ -238,7 +279,7 @@ export default function MainNavBar() {
       <MenuItem>
         <IconButton aria-label="show 11 new notifications" color="inherit">
           <Badge
-            badgeContent={24}
+            badgeContent={getNotifs()}
             classes={{ badge: classes.customBadgeRed }}
           >  
             <NotificationsIcon />
@@ -343,7 +384,7 @@ export default function MainNavBar() {
             <span>
             <IconButton aria-label="show 4 new mails" color="inherit">
               <Badge
-                badgeContent={4}
+                badgeContent={getMails()}
                 classes={{ badge: classes.customBadgeGreen }}
               >
                 <MailIcon />
@@ -351,7 +392,7 @@ export default function MainNavBar() {
             </IconButton>
             <IconButton aria-label="show 17 new notifications" color="inherit">
               <Badge
-                badgeContent={24}
+                badgeContent={getNotifs()}
                 classes={{ badge: classes.customBadgeRed }}
               >
                 <NotificationsIcon />

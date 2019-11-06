@@ -3,6 +3,8 @@ import { withStyles } from '@material-ui/core/styles'
 import Cookies from 'js-cookie'
 import Typography from '@material-ui/core/Typography'
 import Box from '@material-ui/core/Box'
+import Paper from '@material-ui/core/Paper'
+import SideMenu from '../navigation/SideMenu'
 
 const Styles = theme => ({
     itemName: {
@@ -14,6 +16,21 @@ const Styles = theme => ({
     },
     boxWidth: {
         width: "100%",
+    },
+    menuBox: {
+        paddingRight: 20,
+        //width: 400,
+    },
+    paper: {
+        marginLeft: 20,
+        marginRight: 20,
+        marginTop: 50,
+        marginBottom: 50,
+        paddingLeft: 20,
+        paddingRight: 20,
+    },
+    title: {
+        fontSize: "1.4em",
     },
 });
 
@@ -67,10 +84,20 @@ class UserReviewsController extends Component {
         const { classes } = this.props
 
         return (
-            <Box className={classes.boxWidth}>
-                <Typography variant="h5" component="h5">
-                    User reviews<br />
+            <Box>
+                <Paper className={classes.paper}>
+                <Typography className={classes.title}>
+                    User reviews
                 </Typography>
+                <Box display="flex" flexDirection="row">
+                    <Box className = {classes.menuBox}>
+                        <SideMenu selected="reviews" />
+                    </Box>
+                    <Box flexGrow={1}>
+                        Reviews stuff
+                    </Box>
+                </Box>
+                </Paper>
             </Box>
         );
     }

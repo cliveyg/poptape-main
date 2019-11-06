@@ -1,8 +1,9 @@
 import React, {Component} from 'react'
 import { withStyles } from '@material-ui/core/styles'
-//import Cookies from 'js-cookie'
 import Typography from '@material-ui/core/Typography'
 import Box from '@material-ui/core/Box'
+import SideMenu from '../navigation/SideMenu'
+import Paper from '@material-ui/core/Paper'
 
 const Styles = theme => ({
     username: {
@@ -14,6 +15,18 @@ const Styles = theme => ({
     },
     nonCenter: {
         textAlign: "justify",
+    },
+    menuBox: {
+        paddingRight: 20,
+        //width: 400,
+    },
+    paper: {
+        marginLeft: 20,
+        marginRight: 20,
+        marginTop: 50,
+        marginBottom: 50,
+        paddingLeft: 20,
+        paddingRight: 20,
     },
 });
 
@@ -48,19 +61,19 @@ class AccountPageController extends Component {
                 </div>
             :
                 <Box className={classes.nonCenter}>
-                    <Box>
+                    <Paper className={classes.paper}>
                     <Typography className={classes.username} variant="h4" component="h4">
                         Account details for {this.props.username}
                     </Typography>
-                    </Box>
                     <Box display="flex" flexDirection="row">
-                        <Box flex={5}>
-                            Oooh looky here
+                        <Box className = {classes.menuBox}>
+                            <SideMenu selected="account" />
                         </Box>
-                        <Box flex={5} className={classes.itemDescriptionColumn}>
-                            Box 2
+                        <Box flexGrow={1}>
+                            Accounty stuff
                         </Box>
                     </Box>
+                    </Paper>
                 </Box>
             }
             </div>

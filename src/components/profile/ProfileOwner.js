@@ -20,6 +20,7 @@ import DialogContent from '@material-ui/core/DialogContent'
 import MaxTextField from '../helpers/MaxTextField'
 
 import MetaViewer from '../reviews/MetaViewer'
+import SideMenu from '../navigation/SideMenu'
 
 import { withRouter } from 'react-router-dom'
 import compose from 'recompose/compose'
@@ -37,6 +38,18 @@ const Styles = theme => ({
         marginTop: 15,
         textTransform: "none",
         marginRight: 15,
+    },
+    menubuttons: {
+        marginTop: 15,
+        textTransform: "none",
+        marginRight: 15,
+        //width: "100%",
+        width: 200,
+    },
+    menuBox: {
+        paddingRight: 20,    
+        //width: 400,
+        //height: 600,
     },
     buttons: {
         textTransform: "none",
@@ -56,7 +69,7 @@ const Styles = theme => ({
     },
 })
 
-class ProfileOwner extends Component {
+class NewProfileOwner extends Component {
   
     constructor(props){
         super(props)
@@ -226,117 +239,83 @@ class ProfileOwner extends Component {
                     <Typography className={classes.title}>
                         Your profile
                     </Typography>
-                    <Card>
-                    <CardContent>                    
                     <Box display="flex" flexDirection="row">
-                        <Box flex={1} className={classes.avatarBox}>
-                        <AvatarChooser
-                            avatarSize = "xl"
-                            avatarObj = {this.state.avatarObj}
-                        />
+                        <Box className = {classes.menuBox}>
+                            <SideMenu selected="profile" />
                         </Box>
-                        <Box flex={2}>
-                            <Box display="flex" flexDirection="column">
-                                <Box>
-                                <Button
-                                    className = {classes.dropbuttons}
-                                    color = "secondary"
-                                    variant="outlined"
-                                    size="small" 
-                                    onClick={this.handleOpen.bind(this)}
-                                >
-                                    Upload avatar
-                                </Button>
+                        <Box flexGrow={1}>
+                            <Card>
+                            <CardContent>                    
+                            <Box display="flex" flexDirection="row">
+                                <Box flex={1} className={classes.avatarBox}>
+                                <AvatarChooser
+                                    avatarSize = "xl"
+                                    avatarObj = {this.state.avatarObj}
+                                />
                                 </Box>
-                                <Box>
-                                <Button
-                                    className = {classes.dropbuttons}
-                                    color = "secondary"
-                                    variant="outlined"
-                                    size="small"
-                                    onClick={this.handleStandard.bind(this)}
-                                >
-                                    Select from existing
-                                </Button>
+                                <Box flex={2}>
+                                    <Box display="flex" flexDirection="column">
+                                        <Box>
+                                        <Button
+                                            className = {classes.dropbuttons}
+                                            color = "secondary"
+                                            variant="outlined"
+                                            size="small" 
+                                            onClick={this.handleOpen.bind(this)}
+                                        >
+                                            Upload avatar
+                                        </Button>
+                                        </Box>
+                                        <Box>
+                                        <Button
+                                            className = {classes.dropbuttons}
+                                            color = "secondary"
+                                            variant="outlined"
+                                            size="small"
+                                            onClick={this.handleStandard.bind(this)}
+                                        >
+                                            Select from existing
+                                        </Button>
+                                        </Box>
+                                    </Box>
+                                </Box>
+                                <Box flex={2}>
+                                    <MetaViewer />
+                                </Box>
+                                <Box flexGrow={4}>
+                                    
                                 </Box>
                             </Box>
-                        </Box>
-                        <Box flex={2}>
+                            </CardContent>
+                            </Card>
+                            <Box className={classes.about_me}>
+                                <MaxTextField
+                                    multiline
+                                    rows={5}
+                                    margin="dense"
+                                    label="About you"
+                                    name="about_me"
+                                    type="text"
+                                    inputProps={{
+                                        maxLength: 500
+                                    }}
+                                    characterLimit={500}
+                                    helperText="Number of characters:&nbsp;&nbsp;&nbsp;"
+                                    fullWidth
+                                    value={this.state.aboutMe}
+                                    onChange = {(e) => {this.onChange(e, 'aboutMe')}}
+                                /><br />
                                 <Button
                                     className = {classes.dropbuttons}
-                                    color = "primary"
+                                    color = "secondary"
                                     variant="outlined"
                                     size="small"
-                                    onClick={() => this.props.history.push('/user/'+this.state.username+'/watchlist')}
+                                    onClick={this.submitAboutMe.bind(this)}
                                 >
-                                    My watchlist
-                                </Button>
-                                <br />
-                                <Button
-                                    className = {classes.dropbuttons}
-                                    color = "primary"
-                                    variant="outlined"
-                                    size="small"
-                                    onClick={() => this.props.history.push('/user/'+this.state.username+'/favourites')}
-                                >
-                                    My favourites
-                                </Button>
-                                <br />
-                                <Button
-                                    className = {classes.dropbuttons}
-                                    color = "primary"
-                                    variant="outlined"
-                                    size="small"
-                                    onClick={() => this.props.history.push('/user/'+this.state.username+'/viewed')}
-                                >
-                                    My recently viewed
-                                </Button>
-                                <br />
-                                <Button
-                                    className = {classes.dropbuttons}
-                                    color = "primary"
-                                    variant="outlined"
-                                    size="small"
-                                    onClick={() => this.props.history.push('/user/'+this.state.username+'/purchased')}
-                                >
-                                    My purchase history
-                                </Button>
+                                    Update about you
+                                </Button><br /><br />
+                            </Box>
                         </Box>
-                        <Box flex={2}>
-                            <MetaViewer />
-                        </Box>
-                        <Box flexGrow={5}>
-                            
-                        </Box>
-                    </Box>
-                    </CardContent>
-                    </Card>
-                    <Box className={classes.about_me}>
-                        <MaxTextField
-                            multiline
-                            rows={5}
-                            margin="dense"
-                            label="About you"
-                            name="about_me"
-                            type="text"
-                            inputProps={{
-                                maxLength: 500
-                            }}
-                            characterLimit={500}
-                            helperText="Number of characters:&nbsp;&nbsp;&nbsp;"
-                            fullWidth
-                            value={this.state.aboutMe}
-                            onChange = {(e) => {this.onChange(e, 'aboutMe')}}
-                        /><br />
-                        <Button
-                            className = {classes.dropbuttons}
-                            color = "secondary"
-                            variant="outlined"
-                            size="small"
-                            onClick={this.submitAboutMe.bind(this)}
-                        >
-                            Update about you
-                        </Button><br /><br />
                     </Box>
                     <Box>
                         <DropzoneDialog
@@ -384,4 +363,4 @@ class ProfileOwner extends Component {
     }
 }
 
-export default compose(withStyles(Styles))(withRouter(ProfileOwner))
+export default compose(withStyles(Styles))(withRouter(NewProfileOwner))

@@ -1,16 +1,12 @@
 import React from 'react'
-//import { Link } from 'react-router-dom'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 
 import 'typeface-varela-round'
 import MainNavBar from '../components/navigation/MainNavBar'
-//import Paper from '@material-ui/core/Paper'
-//import Typography from '@material-ui/core/Typography'
-//import Cookies from 'js-cookie'
 import Box from '@material-ui/core/Box'
-//import UserReviewsController from '../components/reviews/UserReviewsController'
 import { useHistory } from "react-router-dom"
 import Cookies from 'js-cookie'
+import Favourites from '../components/user/Favourites'
 
 const theme = createMuiTheme({
   typography: {
@@ -54,7 +50,7 @@ export default function UserFavouritesPage(props) {
                 <MainNavBar />
             </header>
             <Box>
-                User favourites
+                <Favourites />
             </Box>
             </MuiThemeProvider>
         </div>
