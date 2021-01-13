@@ -4,7 +4,7 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 
 import 'typeface-varela-round'
 import MainNavBar from '../components/navigation/MainNavBar'
-import Paper from '@material-ui/core/Paper'
+//import Paper from '@material-ui/core/Paper'
 import Box from '@material-ui/core/Box'
 //import Typography from '@material-ui/core/Typography'
 import Cookies from 'js-cookie'
@@ -82,8 +82,7 @@ export default function UserAccountPage(props) {
             <header>
                 <MainNavBar />
             </header>
-            <div style={{ textAlign: "center", marginTop: 20, marginLeft: 20, marginRight: 20  }}>
-                <Paper style={{ paddingBottom: 50 }}>
+            <div style={{ textAlign: "center", marginBottom: 20  }}>
                     {accountAuthed ?
                         <>
                             <AccountPageController
@@ -97,7 +96,6 @@ export default function UserAccountPage(props) {
                              />
                         </>
                     }
-                </Paper>
             </div>
             </MuiThemeProvider>
         </Box>

@@ -80,6 +80,28 @@ class SideMenu extends Component {
                 </Button>
             }
             <br />
+            {this.state.selected === "messages" ?
+                <Button
+                    className = {classes.menubuttons}
+                    color = "primary"
+                    variant="contained"
+                    size="small"
+                    onClick={() => this.props.history.push('/user/'+this.state.usernamei+'/messages')}
+                >
+                    My messages
+                </Button>
+            :
+                <Button
+                    className = {classes.menubuttons}
+                    color = "primary"
+                    variant="outlined"
+                    size="small"
+                    onClick={() => this.props.history.push('/user/'+this.state.username+'/messages')}
+                >
+                    My messages
+                </Button>
+            }
+            <br />
             {this.state.selected === "watchlist" ?
                 <Button
                     className = {classes.menubuttons}

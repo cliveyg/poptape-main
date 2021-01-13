@@ -3,7 +3,7 @@ import { withStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 import Box from '@material-ui/core/Box'
-import GridFromListerMS from '../helpers/GridFromListerMS'
+//import GridFromListerMS from '../helpers/GridFromListerMS'
 import Cookies from 'js-cookie'
 import { withRouter } from 'react-router-dom'
 import compose from 'recompose/compose'
@@ -39,7 +39,7 @@ class Favourites extends Component {
     } 
 
     componentDidMount() {
-        document.title = 'poptape auctions | my recently viewed items'
+        document.title = 'poptape auctions | my favourite sellers'
     }
     
 
