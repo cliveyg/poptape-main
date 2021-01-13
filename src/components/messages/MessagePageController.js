@@ -3,7 +3,10 @@ import { withStyles } from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 import Box from '@material-ui/core/Box'
-import GridFromListerMS from '../helpers/GridFromListerMS'
+//import GridFromListerMS from '../helpers/GridFromListerMS'
+import Cookies from 'js-cookie'
+import { withRouter } from 'react-router-dom'
+import compose from 'recompose/compose'
 import SideMenu from '../navigation/SideMenu'
 
 const Styles = theme => ({
@@ -24,19 +27,19 @@ const Styles = theme => ({
     },
 })
 
-class Watchlist extends Component {
+class MessagePageController extends Component {
   
     constructor(props){
         super(props)
      
         this.state = {
-
+            username: Cookies.get('username'),
         }
 
     } 
 
     componentDidMount() {
-        document.title = 'poptape auctions | my watchlist'
+        document.title = 'poptape auctions | my recently viewed items'
     }
     
 
@@ -46,16 +49,21 @@ class Watchlist extends Component {
             <Box>
                 <Paper className={classes.paper}>
                     <Typography className={classes.title}>
-                        Your watchlist
+                        Your messages
                     </Typography>
                     <Box display="flex" flexDirection="row">
                         <Box className = {classes.menuBox}>
-                            <SideMenu selected="watchlist" />
+                            <SideMenu selected="messages" />
                         </Box>
                         <Box flexGrow={1}>
-                            <GridFromListerMS
-                                listType = 'watchlist'
-                            />                        
+                            <Box display="flex" flexDirection="row">
+                                <Box>
+                                    navigation pane
+                                </Box>
+                                <Box>
+                                    reading pane
+                                </Box>
+                            </Box>
                         </Box>
                     </Box>
                 </Paper>
@@ -65,4 +73,4 @@ class Watchlist extends Component {
 
 }
 
-export default withStyles(Styles)(Watchlist)
+export default compose(withStyles(Styles))(withRouter(MessagePageController))

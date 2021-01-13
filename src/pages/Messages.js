@@ -6,6 +6,7 @@ import MainNavBar from '../components/navigation/MainNavBar'
 import Box from '@material-ui/core/Box'
 import { useHistory } from "react-router-dom"
 import Cookies from 'js-cookie'
+import MessagePageController from '../components/messages/MessagePageController'
 
 const theme = createMuiTheme({
   typography: {
@@ -50,7 +51,7 @@ export default function Messages(props) {
                 <MainNavBar />
             </header>
             <Box>
-                Messages page
+                <MessagePageController />
             </Box>
             </MuiThemeProvider>
         </div>
