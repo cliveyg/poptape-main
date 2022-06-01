@@ -30,7 +30,7 @@
     "react-scripts": "^3.4.1",
     "recompose": "^0.30.0",
     "redux": "^4.0.5",
-    "sharp": "^0.23.4",
+    "sharp": "^0.30.5",
     "superagent": "^5.2.2",
     "typeface-varela-round": "0.0.71",
     "typescript": "^3.8.3",
