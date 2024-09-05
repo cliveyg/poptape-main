@@ -11,7 +11,7 @@
     "@unicef/material-ui-currency-textfield": "^0.8.6",
     "date-fns": "^2.12.0",
     "formik": "^1.5.8",
-    "image-thumbnail": "^1.0.15",
+    "image-thumbnail": "^1.0.17",
     "js-cookie": "^2.2.1",
     "jss": "^9.8.7",
     "material-ui": "^1.0.0-beta.46",
